@@ -45,6 +45,11 @@ config NAND_S3C24X0
 	help
 	  Add support for processor's NAND device controller.
 
+config NAND_LPC3250
+	bool
+	prompt "LPC3250 NAND driver"
+	depends on ARCH_LPC3250
+
 config MTD_NAND_VERIFY_WRITE
 	bool "Verify NAND page writes"
 	help
