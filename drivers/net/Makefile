@@ -8,6 +8,7 @@ obj-$(CONFIG_DRIVER_NET_MPC5200)	+= fec_mpc5200.o
 obj-$(CONFIG_DRIVER_NET_FEC_IMX)	+= fec_imx.o
 obj-$(CONFIG_DRIVER_NET_EP93XX)		+= ep93xx.o
 obj-$(CONFIG_DRIVER_NET_MACB)		+= macb.o
+obj-$(CONFIG_DRIVER_NET_LPC3250)	+= lpc3250.o
 obj-$(CONFIG_DRIVER_NET_TAP)		+= tap.o
 obj-$(CONFIG_MIIPHY)			+= miiphy.o
 obj-$(CONFIG_NET_USB)			+= usb/

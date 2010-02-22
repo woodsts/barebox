@@ -74,6 +74,12 @@ config DRIVER_NET_MACB
 	depends on ARCH_AT91
 	select MIIPHY
 
+config DRIVER_NET_LPC3250
+	bool "lpc3250 Ethernet driver"
+	depends on ARCH_LPC3250
+	select ARM_OPTIMZED_STRING_FUNCTIONS
+	select MIIPHY
+
 config DRIVER_NET_TAP
 	bool "tap Ethernet driver"
 	depends on LINUX
