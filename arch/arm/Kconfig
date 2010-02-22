@@ -40,6 +40,10 @@ config ARCH_IMX
 	bool "Freescale iMX-based"
 	select GENERIC_GPIO
 
+config ARCH_LPC3250
+	bool "NXP LPC3250 based"
+	select CPU_ARM926T
+
 config ARCH_NETX
 	bool "Hilscher NetX based"
 	select CPU_ARM926T
@@ -58,6 +62,7 @@ source arch/arm/mach-at91/Kconfig
 source arch/arm/mach-at91rm9200/Kconfig
 source arch/arm/mach-ep93xx/Kconfig
 source arch/arm/mach-imx/Kconfig
+source arch/arm/mach-lpc3250/Kconfig
 source arch/arm/mach-netx/Kconfig
 source arch/arm/mach-omap/Kconfig
 source arch/arm/mach-s3c24xx/Kconfig

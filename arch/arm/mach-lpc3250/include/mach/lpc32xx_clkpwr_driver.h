@@ -1,0 +1,206 @@
+/***********************************************************************
+ * $Id:: lpc32xx_clkpwr_driver.h 949 2008-07-28 16:57:55Z wellsk       $
+ *
+ * Project: LPC32XX Clock and Power controller driver
+ *
+ * Description:
+ *     This file contains driver support for the LPC32XX Clock and Power
+ *     controller.
+ *
+ ***********************************************************************
+ * Software that is described herein is for illustrative purposes only
+ * which provides customers with programming information regarding the
+ * products. This software is supplied "AS IS" without any warranties.
+ * NXP Semiconductors assumes no responsibility or liability for the
+ * use of the software, conveys no license or title under any patent,
+ * copyright, or mask work right to the product. NXP Semiconductors
+ * reserves the right to make changes in the software without
+ * notification. NXP Semiconductors also make no representation or
+ * warranty that such application will be suitable for the specified
+ * use without further testing or modification.
+ *********************************************************************/
+
+#ifndef LPC32XX_CLKPWR_DRIVER_H
+#define LPC32XX_CLKPWR_DRIVER_H
+
+#define CLKPWR_BOOTMAP_SEL_BIT 0x1
+
+/* Enumeration for clock enable/disable selection and determining base
+   clock rates and sources */
+typedef enum
+{
+  CLKPWR_FIRST_CLK = 0,
+  CLKPWR_USB_HCLK = CLKPWR_FIRST_CLK,
+  CLKPWR_LCD_CLK,
+  CLKPWR_SSP1_CLK,
+  CLKPWR_SSP0_CLK,
+  CLKPWR_I2S1_CLK,
+  CLKPWR_I2S0_CLK,
+  CLKPWR_MSCARD_CLK,
+  CLKPWR_MAC_DMA_CLK,
+  CLKPWR_MAC_MMIO_CLK,
+  CLKPWR_MAC_HRC_CLK,
+  CLKPWR_I2C2_CLK,
+  CLKPWR_I2C1_CLK,
+  CLKPWR_KEYSCAN_CLK,
+  CLKPWR_ADC_CLK,
+  CLKPWR_PWM2_CLK,
+  CLKPWR_PWM1_CLK,
+  CLKPWR_HSTIMER_CLK,
+  CLKPWR_WDOG_CLK,
+  CLKPWR_TIMER3_CLK,
+  CLKPWR_TIMER2_CLK,
+  CLKPWR_TIMER1_CLK,
+  CLKPWR_TIMER0_CLK,
+  CLKPWR_PWM4_CLK,
+  CLKPWR_PWM3_CLK,
+  CLKPWR_SPI2_CLK,
+  CLKPWR_SPI1_CLK,
+  CLKPWR_NAND_SLC_CLK,
+  CLKPWR_NAND_MLC_CLK,
+  CLKPWR_UART6_CLK,
+  CLKPWR_UART5_CLK,
+  CLKPWR_UART4_CLK,
+  CLKPWR_UART3_CLK,
+  CLKPWR_DMA_CLK,
+  CLKPWR_SDRAMDDR_CLK,
+  CLKPWR_LAST_CLK
+} CLKPWR_CLK_T;
+
+/* Enumeration to control output muxes of several signals */
+typedef enum
+{
+  CLKPWR_HIGHCORE = 0,
+  CLKPWR_SYSCLKEN,
+  CLKPWR_TEST_CLK1,
+  CLKPWR_TEST_CLK2,
+  CLKPWR_SPI2_DATIO,
+  CLKPWR_SPI2_CLK_PAD,
+  CLKPWR_SPI1_DATIO,
+  CLKPWR_SPI1_CLK_PAD
+} CLKPWR_MUX_STATE_T;
+
+/* Main system oscillators */
+typedef enum
+{
+  CLKPWR_MAIN_OSC = 0,
+  CLKPWR_PLL397_OSC
+} CLKPWR_OSC_T;
+
+/* PLL enumerations */
+typedef enum
+{
+  CLKPWR_PLL397 = 0,
+  CLKPWR_HCLK_PLL,
+  CLKPWR_USB_PLL
+} CLKPWR_PLL_T;
+
+/* Autoclock type enumeration */
+typedef enum
+{
+  CLKPWR_ACLK_USB_DEV = 0,
+  CLKPWR_ACLK_IRAM,
+  CLKPWR_ACLK_IROM
+} CLKPWR_AUTOCLK_T;
+
+/* Interrupt event sources */
+#define CLKPWR_SOURCES_INT_BASE  0
+#define CLKPWR_SOURCES_EXT_BASE  32
+#define CLKPWR_SOURCES_GPIO_BASE 64
+typedef enum
+{
+  /* Internal sources */
+  CLKPWR_EVENT_INT_GPIO_00 = CLKPWR_SOURCES_INT_BASE,
+  CLKPWR_EVENT_INT_GPIO_01,
+  CLKPWR_EVENT_INT_GPIO_02,
+  CLKPWR_EVENT_INT_GPIO_03,
+  CLKPWR_EVENT_INT_GPIO_04,
+  CLKPWR_EVENT_INT_GPIO_05,
+  CLKPWR_EVENT_INT_GPIO_P0_P1,
+  CLKPWR_EVENT_INT_ENET_MAC,
+  CLKPWR_EVENT_INT_KEY = CLKPWR_SOURCES_INT_BASE + 16,
+  CLKPWR_EVENT_INT_USBATXINT = CLKPWR_SOURCES_INT_BASE + 19,
+  CLKPWR_EVENT_INT_USBOTGTIMER,
+  CLKPWR_EVENT_INT_USB_I2C,
+  CLKPWR_EVENT_INT_USB,
+  CLKPWR_EVENT_INT_USBNEEDCLK,
+  CLKPWR_EVENT_INT_RTC,
+  CLKPWR_EVENT_INT_MSTIMER,
+  CLKPWR_EVENT_INT_USBAHNEEDCLK,
+  CLKPWR_EVENT_INT_AUX = CLKPWR_SOURCES_INT_BASE + 29,
+  CLKPWR_EVENT_INT_PD = CLKPWR_SOURCES_INT_BASE + 30,
+  CLKPWR_EVENT_INT_ADC = CLKPWR_SOURCES_INT_BASE + 31,
+
+  /* External sources */
+  CLKPWR_EVENT_EXT_GPIO_O8 = CLKPWR_SOURCES_EXT_BASE,
+  CLKPWR_EVENT_EXT_GPIO_O9,
+  CLKPWR_EVENT_EXT_GPIO_10,
+  CLKPWR_EVENT_EXT_SPI2_DATIN,
+  CLKPWR_EVENT_EXT_GPIO_O7,
+  CLKPWR_EVENT_EXT_SPI1_DATIN,
+  CLKPWR_EVENT_EXT_SYSCLKEN,
+  CLKPWR_EVENT_EXT_GPIO_O0,
+  CLKPWR_EVENT_EXT_GPIO_O1,
+  CLKPWR_EVENT_EXT_GPIO_O2,
+  CLKPWR_EVENT_EXT_GPIO_O3,
+  CLKPWR_EVENT_EXT_GPIO_O4,
+  CLKPWR_EVENT_EXT_GPIO_O5,
+  CLKPWR_EVENT_EXT_GPIO_O6,
+  CLKPWR_EVENT_EXT_MSDIO_ST,
+  CLKPWR_EVENT_EXT_SDIO,
+  CLKPWR_EVENT_EXT_U1_RX = CLKPWR_SOURCES_EXT_BASE + 21,
+  CLKPWR_EVENT_EXT_U2_RX,
+  CLKPWR_EVENT_EXT_U3_HCTS,
+  CLKPWR_EVENT_EXT_U3_RX,
+  CLKPWR_EVENT_EXT_GPI_11,
+  CLKPWR_EVENT_EXT_U5_RX,
+  CLKPWR_EVENT_EXT_U6_IRRX = CLKPWR_SOURCES_EXT_BASE + 28,
+  CLKPWR_EVENT_EXT_U7_HXTC = CLKPWR_SOURCES_EXT_BASE + 30,
+  CLKPWR_EVENT_EXT_U7_RX,
+
+  /* GPIO sources */
+  CLKPWR_EVENT_GPIO_P0_00 = CLKPWR_SOURCES_GPIO_BASE,
+  CLKPWR_EVENT_GPIO_P0_01,
+  CLKPWR_EVENT_GPIO_P0_02,
+  CLKPWR_EVENT_GPIO_P0_03,
+  CLKPWR_EVENT_GPIO_P0_04,
+  CLKPWR_EVENT_GPIO_P0_05,
+  CLKPWR_EVENT_GPIO_P0_06,
+  CLKPWR_EVENT_GPIO_P0_07,
+  CLKPWR_EVENT_GPIO_P1_00,
+  CLKPWR_EVENT_GPIO_P1_01,
+  CLKPWR_EVENT_GPIO_P1_02,
+  CLKPWR_EVENT_GPIO_P1_03,
+  CLKPWR_EVENT_GPIO_P1_04,
+  CLKPWR_EVENT_GPIO_P1_05,
+  CLKPWR_EVENT_GPIO_P1_06,
+  CLKPWR_EVENT_GPIO_P1_07,
+  CLKPWR_EVENT_GPIO_P1_08,
+  CLKPWR_EVENT_GPIO_P1_09,
+  CLKPWR_EVENT_GPIO_P1_10,
+  CLKPWR_EVENT_GPIO_P1_11,
+  CLKPWR_EVENT_GPIO_P1_12,
+  CLKPWR_EVENT_GPIO_P1_13,
+  CLKPWR_EVENT_GPIO_P1_14,
+  CLKPWR_EVENT_GPIO_P1_15,
+  CLKPWR_EVENT_GPIO_P1_16,
+  CLKPWR_EVENT_GPIO_P1_17,
+  CLKPWR_EVENT_GPIO_P1_18,
+  CLKPWR_EVENT_GPIO_P1_19,
+  CLKPWR_EVENT_GPIO_P1_20,
+  CLKPWR_EVENT_GPIO_P1_21,
+  CLKPWR_EVENT_GPIO_P1_22,
+  CLKPWR_EVENT_GPIO_P1_23,
+  CLKPWR_EVENT_LAST
+} CLKPWR_EVENT_T;
+
+/* High level chip clocking modes */
+typedef enum
+{
+  CLKPWR_MD_RUN,
+  CLKPWR_MD_DIRECTRUN,
+  CLKPWR_MODE_STOP
+} CLKPWR_MODE_T;
+
+#endif /* LPC32XX_CLKPWR_DRIVER_H */
+

@@ -1,0 +1,22 @@
+if ARCH_LPC3250
+
+config ARCH_TEXT_BASE
+        hex
+	default 0x83f00000 if MACH_SYSTEC_LPC3250
+
+config BOARDINFO
+	default "Systec LPC3250" if MACH_SYSTEC_LPC3250
+
+choice
+
+	prompt "Board Type"
+
+config MACH_SYSTEC_LPC3250
+	bool "Systec LPC3250"
+	select MACH_HAS_LOWLEVEL_INIT
+	select HAVE_MMU
+
+endchoice
+
+endif
+
