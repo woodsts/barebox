@@ -148,6 +148,7 @@ board-$(CONFIG_MACH_CCMX51)			:= ccxmx51
 board-$(CONFIG_MACH_TINY210)			:= friendlyarm-tiny210
 board-$(CONFIG_MACH_SABRELITE)			:= freescale-mx6-sabrelite
 board-$(CONFIG_MACH_TX53)			:= karo-tx53
+board-$(CONFIG_MACH_IMX_DT)			:= imx-dt
 
 machdirs := $(patsubst %,arch/arm/mach-%/,$(machine-y))
 
