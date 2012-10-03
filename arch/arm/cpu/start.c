@@ -61,5 +61,8 @@ void __naked board_init_lowlevel_return(void)
 
 	setup_c();
 
+	mem_malloc_init((void *)MALLOC_BASE,
+			(void *)(MALLOC_BASE + MALLOC_SIZE - 1));
+
 	start_barebox();
 }
