@@ -291,7 +291,7 @@ console_initcall(imx25_console_init);
 #ifdef CONFIG_NAND_IMX_BOOT
 void __bare_init nand_boot(void)
 {
-	imx_nand_load_image(_text, barebox_image_size);
+	imx_nand_load_image((void *)ld_var(_text), ld_var(_barebox_image_size));
 	imx25_barebox_entry();
 }
 #endif

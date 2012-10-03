@@ -54,7 +54,7 @@ static void __bare_init __naked insdram(void)
 	/* setup a stack to be able to call imx_nand_load_image() */
 	arm_setup_stack(MX35_IRAM_BASE_ADDR + MX35_IRAM_SIZE - 8);
 
-	imx_nand_load_image(_text, barebox_image_size);
+	imx_nand_load_image((void *)ld_var(_text), ld_var(_barebox_image_size));
 
 	imx35_barebox_entry(0);
 }
@@ -212,7 +212,7 @@ void __bare_init __naked reset(void)
 		goto out;
 
 	src = (unsigned int *)MX35_NFC_BASE_ADDR;
-	trg = (unsigned int *)_text;
+	trg = (unsigned int *)ld_var(_text);
 
 	/* Move ourselves out of NFC SRAM */
 	for (i = 0; i < 0x800 / sizeof(int); i++)

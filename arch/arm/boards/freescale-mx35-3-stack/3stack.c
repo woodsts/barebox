@@ -445,7 +445,7 @@ void __bare_init nand_boot(void)
 	 * The driver is able to detect NAND's pagesize by CPU internal
 	 * fuses or external pull ups. But not the blocksize...
 	 */
-	imx_nand_load_image(_text, barebox_image_size);
+	imx_nand_load_image((void *)ld_var(_text), ld_var(_barebox_image_size));
 	imx35_barebox_entry(MX35_CSD0_BASE_ADDR, SZ_128M);
 }
 #endif

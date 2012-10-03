@@ -36,7 +36,7 @@ static void __bare_init __naked insdram(void)
 	/* setup a stack to be able to call imx_nand_load_image() */
 	arm_setup_stack(MX27_IRAM_BASE_ADDR + MX27_IRAM_SIZE - 8);
 
-	imx_nand_load_image(_text, barebox_image_size);
+	imx_nand_load_image((void *)ld_var(_text), ld_var(_barebox_image_size));
 
 	imx27_barebox_entry(0);
 }

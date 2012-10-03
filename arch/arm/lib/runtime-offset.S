@@ -15,3 +15,27 @@ THUMB(	subs r0, r0, #1)
 linkadr:
 .word get_runtime_offset
 ENDPROC(get_runtime_offset)
+
+
+__ld_var_base:
+
+.macro get_linker_var name
+	.globl __ld_var_\name
+	__ld_var_\name:
+		ldr r0, __\name
+		b 1f
+	__\name: .word \name - __ld_var_base
+.endm
+
+get_linker_var _text
+get_linker_var __rel_dyn_start
+get_linker_var __rel_dyn_end
+get_linker_var __dynsym_start
+get_linker_var __dynsym_end
+get_linker_var _barebox_image_size
+
+1:
+	ldr r1, =__ld_var_base
+	adds r0, r0, r1
+	mov pc, lr
+
