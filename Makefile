@@ -691,13 +691,13 @@ endif
 
 # By default the uImage load address is 2MB below CONFIG_TEXT_BASE,
 # leaving space for the compressed PBL image at 1MB below CONFIG_TEXT_BASE.
-UIMAGE_BASE ?= $(shell printf "0x%08x" $$(($(CONFIG_TEXT_BASE) - 0x200000)))
+UIMAGE_BASE ?= 0xffffffff
 
 # For development provide a target which makes barebox loadable by an
 # unmodified u-boot
 quiet_cmd_barebox_mkimage = MKIMAGE $@
-      cmd_barebox_mkimage = $(srctree)/scripts/mkimage -A $(ARCH) -T firmware -C none \
-       -O barebox -a $(UIMAGE_BASE) -e $(UIMAGE_BASE) \
+      cmd_barebox_mkimage = $(srctree)/scripts/mkimage -A $(ARCH) -T kernel -C none \
+       -O Linux -a $(UIMAGE_BASE) -e $(UIMAGE_BASE) \
        -n "barebox $(KERNELRELEASE)" -d $< $@
 
 # barebox.uimage is build from the raw barebox binary, without any other
