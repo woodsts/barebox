@@ -57,7 +57,7 @@ static struct imx_iim_platform_data imx25_iim_pdata = {
 	.mac_addr_base	= IIM_MAC_ADDR,
 };
 
-static int imx25_init(void)
+int imx25_init(void)
 {
 	uint32_t val;
 
@@ -65,6 +65,11 @@ static int imx25_init(void)
 	imx_25_35_boot_save_loc((val >> MX25_CCM_RCSR_MEM_CTRL_SHIFT) & 0x3,
 			(val >> MX25_CCM_RCSR_MEM_TYPE_SHIFT) & 0x3);
 
+	return 0;
+}
+
+int imx25_devices_init(void)
+{
 	add_generic_device("imx_iim", 0, NULL, MX25_IIM_BASE_ADDR, SZ_4K,
 			IORESOURCE_MEM, &imx25_iim_pdata);
 
@@ -78,4 +83,8 @@ static int imx25_init(void)
 
 	return 0;
 }
+
+#ifndef CONFIG_MACH_IMX_DT
 postcore_initcall(imx25_init);
+postcore_initcall(imx25_devices_init);
+#endif

@@ -24,10 +24,15 @@ void imx21_setup_eimcs(size_t cs, unsigned upper, unsigned lower)
 	writel(lower, MX21_EIM_BASE_ADDR + 4 + cs * 8);
 }
 
-static int imx21_init(void)
+int imx21_init(void)
 {
 	imx_iomuxv1_init((void *)MX21_GPIO1_BASE_ADDR);
 
+	return 0;
+}
+
+int imx21_devices_init(void)
+{
 	add_generic_device("imx21-ccm", 0, NULL, MX21_CCM_BASE_ADDR, 0x100, IORESOURCE_MEM, NULL);
 	add_generic_device("imx1-gpt", 0, NULL, MX21_GPT1_BASE_ADDR, 0x100, IORESOURCE_MEM, NULL);
 	add_generic_device("imx-gpio", 0, NULL, MX21_GPIO1_BASE_ADDR, 0x100, IORESOURCE_MEM, NULL);
@@ -40,4 +45,8 @@ static int imx21_init(void)
 
 	return 0;
 }
+
+#ifndef CONFIG_MACH_IMX_DT
 postcore_initcall(imx21_init);
+postcore_initcall(imx21_devices_init);
+#endif

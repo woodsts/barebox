@@ -52,7 +52,12 @@ void imx6_init_lowlevel(void)
 	writel(0xffffffff, 0x020c4080);
 }
 
-static int imx6_init(void)
+int imx6_init(void)
+{
+	return 0;
+}
+
+int imx6_devices_init(void)
 {
 	add_generic_device("imx-iomuxv3", 0, NULL, MX6_IOMUXC_BASE_ADDR, 0x1000, IORESOURCE_MEM, NULL);
 	add_generic_device("imx6-ccm", 0, NULL, MX6_CCM_BASE_ADDR, 0x4000, IORESOURCE_MEM, NULL);
@@ -68,4 +73,7 @@ static int imx6_init(void)
 
 	return 0;
 }
-postcore_initcall(imx6_init);
+
+#ifndef CONFIG_MACH_IMX_DT
+postcore_initcall(imx6_devices_init);
+#endif

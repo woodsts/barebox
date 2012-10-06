@@ -50,11 +50,16 @@ static int imx53_silicon_revision(void)
 	return 0;
 }
 
-static int imx53_init(void)
+int imx53_init(void)
 {
 	imx53_silicon_revision();
 	imx53_boot_save_loc((void *)MX53_SRC_BASE_ADDR);
 
+	return 0;
+}
+
+int imx53_devices_init(void)
+{
 	add_generic_device("imx_iim", 0, NULL, MX53_IIM_BASE_ADDR, SZ_4K,
 			IORESOURCE_MEM, NULL);
 
@@ -72,7 +77,6 @@ static int imx53_init(void)
 
 	return 0;
 }
-postcore_initcall(imx53_init);
 
 #define setup_pll_1000(base)	imx5_setup_pll((base), 1000, ((10 << 4) + ((1 - 1) << 0)), (12 - 1), 5)
 #define setup_pll_800(base)	imx5_setup_pll((base), 800, ((8 << 4) + ((1 - 1) << 0)), (3 - 1), 1)
@@ -198,3 +202,8 @@ void imx53_init_lowlevel(unsigned int cpufreq_mhz)
 
 	writel(0, ccm + MX5_CCM_CCDR);
 }
+
+#ifndef CONFIG_MACH_IMX_DT
+postcore_initcall(imx53_init);
+postcore_initcall(imx53_devices_init);
+#endif

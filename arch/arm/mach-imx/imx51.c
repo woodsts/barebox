@@ -53,11 +53,16 @@ static int imx51_silicon_revision(void)
 	return 0;
 }
 
-static int imx51_init(void)
+int imx51_init(void)
 {
 	imx51_silicon_revision();
 	imx51_boot_save_loc((void *)MX51_SRC_BASE_ADDR);
 
+	return 0;
+}
+
+int imx51_devices_init(void)
+{
 	add_generic_device("imx_iim", 0, NULL, MX51_IIM_BASE_ADDR, SZ_4K,
 			IORESOURCE_MEM, NULL);
 
@@ -72,7 +77,6 @@ static int imx51_init(void)
 
 	return 0;
 }
-postcore_initcall(imx51_init);
 
 /*
  * Saves the boot source media into the $barebox_loc environment variable
@@ -191,3 +195,8 @@ void imx51_init_lowlevel(unsigned int cpufreq_mhz)
 
 	writel(0x0, ccm + MX5_CCM_CCDR);
 }
+
+#ifndef CONFIG_MACH_IMX_DT
+postcore_initcall(imx51_init);
+postcore_initcall(imx51_devices_init);
+#endif

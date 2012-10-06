@@ -96,17 +96,22 @@ static void imx27_init_max(void)
 	writel(val, max_base + MAX_SLAVE_PORT2_OFFSET + MAX_SLAVE_AMPR_OFFSET);
 }
 
-static int imx27_init(void)
+int imx27_init(void)
 {
 	imx27_silicon_revision();
 	imx_27_boot_save_loc((void *)MX27_SYSCTRL_BASE_ADDR);
 
 	imx_iomuxv1_init((void *)MX27_GPIO1_BASE_ADDR);
 
+	imx27_init_max();
+
+	return 0;
+}
+
+int imx27_devices_init(void)
+{
 	add_generic_device("imx_iim", 0, NULL, MX27_IIM_BASE_ADDR, SZ_4K,
 			IORESOURCE_MEM, NULL);
-
-	imx27_init_max();
 
 	add_generic_device("imx27-ccm", 0, NULL, MX27_CCM_BASE_ADDR, 0x1000, IORESOURCE_MEM, NULL);
 	add_generic_device("imx1-gpt", 0, NULL, MX27_GPT1_BASE_ADDR, 0x100, IORESOURCE_MEM, NULL);
@@ -120,4 +125,8 @@ static int imx27_init(void)
 
 	return 0;
 }
+
+#ifndef CONFIG_MACH_IMX_DT
 postcore_initcall(imx27_init);
+postcore_initcall(imx27_devices_init);
+#endif

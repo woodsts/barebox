@@ -26,7 +26,12 @@ void imx31_setup_weimcs(size_t cs, unsigned upper, unsigned lower,
 	writel(additional, MX31_WEIM_BASE_ADDR + (cs * 0x10) + 0x8);
 }
 
-static int imx31_init(void)
+int imx31_init(void)
+{
+	return 0;
+}
+
+int imx31_devices_init(void)
 {
 	add_generic_device("imx_iim", 0, NULL, MX31_IIM_BASE_ADDR, SZ_4K,
 			IORESOURCE_MEM, NULL);
@@ -41,4 +46,7 @@ static int imx31_init(void)
 
 	return 0;
 }
-postcore_initcall(imx31_init);
+
+#ifndef CONFIG_MACH_IMX_DT
+postcore_initcall(imx31_devices_init);
+#endif

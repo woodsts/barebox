@@ -56,6 +56,11 @@ static int imx1_init(void)
 	imx_iomuxv1_init((void *)MX1_GPIO1_BASE_ADDR);
 	imx1_detect_reset_source();
 
+	return 0;
+}
+
+int imx1_devices_init(void)
+{
 	add_generic_device("imx1-ccm", 0, NULL, MX1_CCM_BASE_ADDR, 0x1000, IORESOURCE_MEM, NULL);
 	add_generic_device("imx1-gpt", 0, NULL, MX1_TIM1_BASE_ADDR, 0x100, IORESOURCE_MEM, NULL);
 	add_generic_device("imx1-gpio", 0, NULL, MX1_GPIO1_BASE_ADDR, 0x100, IORESOURCE_MEM, NULL);
@@ -66,4 +71,8 @@ static int imx1_init(void)
 
 	return 0;
 }
+
+#ifndef CONFIG_MACH_IMX_DT
 postcore_initcall(imx1_init);
+postcore_initcall(imx1_devices_init);
+#endif

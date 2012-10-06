@@ -25,6 +25,25 @@ int imx53_boot_save_loc(void __iomem *src_base);
 /* range e.g. GPIO_1_5 is gpio 5 under linux */
 #define IMX_GPIO_NR(bank, nr)		(((bank) - 1) * 32 + (nr))
 
+int imx1_init(void);
+int imx1_devices_init(void);
+int imx21_init(void);
+int imx22_devices_init(void);
+int imx25_init(void);
+int imx25_devices_init(void);
+int imx27_init(void);
+int imx27_devices_init(void);
+int imx31_init(void);
+int imx31_devices_init(void);
+int imx35_init(void);
+int imx35_devices_init(void);
+int imx51_init(void);
+int imx51_devices_init(void);
+int imx53_init(void);
+int imx53_devices_init(void);
+int imx6_init(void);
+int imx6_devices_init(void);
+
 #ifdef CONFIG_ARCH_IMX1
 #define cpu_is_mx1()	(1)
 #else
