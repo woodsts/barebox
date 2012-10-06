@@ -111,6 +111,8 @@ int of_parse_dtb(struct fdt_header *fdt);
 int of_property_read_string(struct device_node *np, const char *propname,
 				const char **out_string);
 
+int of_fdt_early_scan(void *_fdt, u64 *_mem_start, u64 *_mem_size);
+
 #ifdef CONFIG_OFDEVICE
 int of_parse_partitions(const char *cdevname,
 			    struct device_node *node);
