@@ -49,17 +49,11 @@ static void imx35_silicon_revision(void)
 
 #define L2_MEM_VAL 0x10
 
-static int imx35_l2_fix(void)
-{
-	writel(0x515, MX35_CLKCTL_BASE_ADDR + L2_MEM_VAL);
-
-	return 0;
-}
-core_initcall(imx35_l2_fix);
-
 int imx35_init(void)
 {
 	uint32_t val;
+
+	writel(0x515, MX35_CLKCTL_BASE_ADDR + L2_MEM_VAL);
 
 	imx35_silicon_revision();
 
