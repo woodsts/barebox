@@ -631,18 +631,27 @@ static int smc911x_probe(struct device_d *dev)
 	mdiobus_register(&priv->miibus);
 	eth_register(edev);
 
-        return 0;
+	return 0;
 }
 
+static __maybe_unused struct of_device_id smc_dt_ids[] = {
+	{
+		.compatible = "smsc,lan911x",
+	}, {
+		/* sentinel */
+	}
+};
+
 static struct driver_d smc911x_driver = {
-        .name  = "smc911x",
-        .probe = smc911x_probe,
+	.name  = "smc911x",
+	.probe = smc911x_probe,
+	.of_compatible = DRV_OF_COMPAT(smc_dt_ids),
 };
 
 static int smc911x_init(void)
 {
-        platform_driver_register(&smc911x_driver);
-        return 0;
+	platform_driver_register(&smc911x_driver);
+	return 0;
 }
 
 device_initcall(smc911x_init);
