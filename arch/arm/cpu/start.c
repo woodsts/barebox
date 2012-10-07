@@ -19,6 +19,7 @@
 
 #include <common.h>
 #include <init.h>
+#include <sizes.h>
 #include <asm/barebox-arm.h>
 #include <asm/barebox-arm-head.h>
 #include <asm-generic/memory_layout.h>
@@ -26,6 +27,8 @@
 #include <asm/cache.h>
 #include <memory.h>
 #include <sizes.h>
+
+#include "common.h"
 
 static uint32_t __barebox_arm_boarddata;
 
@@ -46,7 +49,11 @@ static noinline void __start(uint32_t membase, uint32_t memsize,
 {
 	unsigned long malloc_start, malloc_end;
 
+#ifdef CONFIG_RELOCATABLE
+	relocate_binary(membase + memsize - SZ_2M);
+#else
 	setup_c();
+#endif
 
 	if ((unsigned long)_text > membase + memsize ||
 			(unsigned long) _text < membase)

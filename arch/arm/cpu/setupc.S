@@ -32,3 +32,65 @@ ENTRY(setup_c)
 	pop	{r4, r5}
 	mov	pc, lr
 ENDPROC(setup_c)
+
+#ifdef CONFIG_RELOCATABLE
+/*
+ * void setup_c(unsigned long targetadr)
+ *
+ * Copy binary to targetadr, relocate code, clear bss and continue
+ * executing at new address.
+ */
+.section .text.relocate_binary
+ENTRY(relocate_binary)
+					/* r0: target address */
+	push	{r3, r4, r5, r6, r7}
+	mov	r7, lr
+	mov	r6, r0
+	adr	r4,_start
+	ldr	r5,=_start
+	sub	r4, r4, r5
+
+	mov	r1, r4			/* r1: from address */
+
+	cmp	r1, r0			/* already at correct address? */
+	beq	1f			/* yes, skip copy to new address */
+
+	ldr	r2, bss_ofs
+	add	r2, r2, r5		/* r2: size */
+
+	bl	memcpy			/* copy binary */
+
+	mov	r0,#0
+	mcr	p15, 0, r0, c7, c5, 0	/* flush icache */
+
+	ldr	r0,=1f
+	add	r0, r0, r6
+	mov	pc, r0			/* jump to relocated address */
+1:
+	bl	relocate		/* relocate binary */
+
+	ldr	r0, bss_ofs
+	ldr	r5,=_start
+	add	r0, r0, r5		/* r0: bss start */
+
+	ldr	r2, bss_stop_ofs
+	ldr	r3, bss_ofs
+	sub	r2, r2, r3		/* r2: bss size */
+
+	mov	r1, #0
+
+	bl	memset			/* clear bss */
+
+	sub	lr, r7, r4
+	add	lr, lr, r6
+	pop	{r3, r4, r5, r6, r7}
+	mov	pc, lr
+
+_start:
+bss_ofs:
+	.word __bss_start - _start
+bss_stop_ofs:
+	.word __bss_stop - _start
+
+ENDPROC(relocate_binary)
+#endif

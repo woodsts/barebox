@@ -15,6 +15,10 @@ config ARM_LINUX
 	default y
 	depends on CMD_BOOTZ || CMD_BOOTU || CMD_BOOTM
 
+config RELOCATABLE
+	prompt "relocatable binary"
+	bool
+
 config HAVE_MACH_ARM_HEAD
 	bool
 

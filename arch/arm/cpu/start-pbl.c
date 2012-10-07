@@ -31,6 +31,7 @@
 #include <asm/pgtable.h>
 #include <asm/cache.h>
 
+#include "common.h"
 #include "mmu.h"
 
 unsigned long free_mem_ptr;
@@ -115,9 +116,16 @@ static noinline void __barebox_arm_entry(uint32_t membase, uint32_t memsize,
 {
 	void (*barebox)(uint32_t, uint32_t, uint32_t);
 	uint32_t pg_start, pg_end, pg_len;
+	unsigned long offset;
 	int use_mmu = IS_ENABLED(CONFIG_MMU);
 
-	setup_c();
+	if (IS_ENABLED(CONFIG_RELOCATABLE)) {
+		offset = get_runtime_offset();
+		if (offset)
+			relocate();
+	} else {
+		setup_c();
+	}
 
 	/* set 128 KiB at the end of the MALLOC_BASE for early malloc */
 	free_mem_ptr = membase + memsize - SZ_256K;

@@ -22,6 +22,9 @@ $(obj)/zbarebox.S: $(obj)/zbarebox FORCE
 PBL_CPPFLAGS		+= -fdata-sections -ffunction-sections
 LDFLAGS_zbarebox	:= -Map $(obj)/zbarebox.map
 LDFLAGS_zbarebox	+= -static --gc-sections
+ifdef CONFIG_RELOCATABLE
+LDFLAGS_zbarebox += -pie
+endif
 zbarebox-common := $(barebox-pbl-common) $(obj)/$(piggy_o)
 zbarebox-lds := $(obj)/zbarebox.lds
 

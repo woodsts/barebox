@@ -25,7 +25,11 @@ OUTPUT_ARCH(arm)
 ENTRY(start)
 SECTIONS
 {
+#ifdef CONFIG_RELOCATABLE
+	. = 0;
+#else
 	. = TEXT_BASE;
+#endif
 
 #ifndef CONFIG_PBL_IMAGE
 	PRE_IMAGE
@@ -86,6 +90,18 @@ SECTIONS
 	__usymtab_start = .;
 	__usymtab : { BAREBOX_SYMS }
 	__usymtab_end = .;
+
+	.rel.dyn : {
+		__rel_dyn_start = .;
+		*(.rel*)
+		__rel_dyn_end = .;
+	}
+
+	.dynsym : {
+		__dynsym_start = .;
+		*(.dynsym)
+		__dynsym_end = .;
+	}
 
 	. = ALIGN(4);
 	__bss_start = .;
