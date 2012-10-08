@@ -52,9 +52,13 @@ static int imx51_silicon_revision(void)
 
 	return 0;
 }
-
+#include <mach/esdctl.h>
 int imx51_init(void)
 {
+	unsigned long size, base;
+	imx51_sdram_size(&base, &size);
+	printk("SDRAM: base: 0x%08x size: %ldM\n", base, size >> 20);
+
 	imx51_silicon_revision();
 	imx51_boot_save_loc((void *)MX51_SRC_BASE_ADDR);
 

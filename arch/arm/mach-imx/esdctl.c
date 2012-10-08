@@ -81,7 +81,7 @@ static inline unsigned long imx_v2_sdram_size(void __iomem *esdctlbase, int num)
 	return size;
 }
 
-static inline unsigned long imx_v3_sdram_size(void __iomem *esdctlbase, int num)
+static unsigned long imx_v3_sdram_size(void __iomem *esdctlbase, int num)
 {
 	unsigned long size;
 
