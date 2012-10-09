@@ -53,6 +53,8 @@ int imx35_init(void)
 {
 	uint32_t val;
 
+	imx_set_cpu_type(IMX_CPU_IMX35);
+
 	writel(0x515, MX35_CLKCTL_BASE_ADDR + L2_MEM_VAL);
 
 	imx35_silicon_revision();

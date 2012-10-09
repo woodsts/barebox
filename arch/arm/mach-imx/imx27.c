@@ -20,6 +20,7 @@
 #include <mach/generic.h>
 #include <init.h>
 #include <io.h>
+#include <mach/generic.h>
 
 static int imx27_silicon_revision(void)
 {
@@ -98,9 +99,7 @@ static void imx27_init_max(void)
 
 int imx27_init(void)
 {
-	unsigned long size, base;
-	imx27_sdram_size(&base, &size);
-	printk("SDRAM: base: 0x%08x size: %ldM\n", base, size >> 20);
+	imx_set_cpu_type(IMX_CPU_IMX27);
 
 	imx27_silicon_revision();
 	imx_27_boot_save_loc((void *)MX27_SYSCTRL_BASE_ADDR);

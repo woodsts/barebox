@@ -17,6 +17,7 @@
 #include <mach/imx1-regs.h>
 #include <mach/weim.h>
 #include <mach/iomux-v1.h>
+#include <mach/generic.h>
 #include <reset_source.h>
 
 #define MX1_RSR MX1_SCM_BASE_ADDR
@@ -53,6 +54,8 @@ void imx1_setup_eimcs(size_t cs, unsigned upper, unsigned lower)
 
 static int imx1_init(void)
 {
+	imx_set_cpu_type(IMX_CPU_IMX1);
+
 	imx_iomuxv1_init((void *)MX1_GPIO1_BASE_ADDR);
 	imx1_detect_reset_source();
 

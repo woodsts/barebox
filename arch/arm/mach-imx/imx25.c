@@ -61,6 +61,8 @@ int imx25_init(void)
 {
 	uint32_t val;
 
+	imx_set_cpu_type(IMX_CPU_IMX25);
+
 	val = readl(MX25_CCM_BASE_ADDR + MX25_CCM_RCSR);
 	imx_25_35_boot_save_loc((val >> MX25_CCM_RCSR_MEM_CTRL_SHIFT) & 0x3,
 			(val >> MX25_CCM_RCSR_MEM_TYPE_SHIFT) & 0x3);

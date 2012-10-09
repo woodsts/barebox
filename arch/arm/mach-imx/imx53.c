@@ -60,6 +60,8 @@ int imx53_init(void)
 
 int imx53_devices_init(void)
 {
+	imx_set_cpu_type(IMX_CPU_IMX53);
+
 	add_generic_device("imx_iim", 0, NULL, MX53_IIM_BASE_ADDR, SZ_4K,
 			IORESOURCE_MEM, NULL);
 

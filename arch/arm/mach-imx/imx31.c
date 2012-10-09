@@ -17,6 +17,7 @@
 #include <io.h>
 #include <mach/imx31-regs.h>
 #include <mach/weim.h>
+#include <mach/generic.h>
 
 void imx31_setup_weimcs(size_t cs, unsigned upper, unsigned lower,
 		unsigned additional)
@@ -28,6 +29,8 @@ void imx31_setup_weimcs(size_t cs, unsigned upper, unsigned lower,
 
 int imx31_init(void)
 {
+	imx_set_cpu_type(IMX_CPU_IMX31);
+
 	return 0;
 }
 

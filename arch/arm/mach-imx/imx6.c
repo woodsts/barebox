@@ -16,6 +16,7 @@
 #include <io.h>
 #include <sizes.h>
 #include <mach/imx6-regs.h>
+#include <mach/generic.h>
 
 void imx6_init_lowlevel(void)
 {
@@ -54,6 +55,8 @@ void imx6_init_lowlevel(void)
 
 int imx6_init(void)
 {
+	imx_set_cpu_type(IMX_CPU_IMX6);
+
 	return 0;
 }
 

@@ -29,3 +29,10 @@ void imx_set_silicon_revision(const char *soc, int revision)
 			(revision >> 4) & 0xf,
 			revision & 0xf);
 }
+
+unsigned int __imx_cpu_type;
+
+void imx_set_cpu_type(unsigned int cpu_type)
+{
+	__imx_cpu_type = cpu_type;
+}
