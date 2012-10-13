@@ -114,25 +114,8 @@ static noinline void __barebox_arm_entry(uint32_t membase, uint32_t memsize,
 		uint32_t boarddata)
 {
 	void (*barebox)(uint32_t, uint32_t, uint32_t);
-	uint32_t offset;
 	uint32_t pg_start, pg_end, pg_len;
 	int use_mmu = IS_ENABLED(CONFIG_MMU);
-
-	/* Get offset between linked address and runtime address */
-	offset = get_runtime_offset();
-
-	pg_start = (uint32_t)&input_data - offset;
-	pg_end = (uint32_t)&input_data_end - offset;
-	pg_len = pg_end - pg_start;
-
-	if (offset && (IS_ENABLED(CONFIG_PBL_FORCE_PIGGYDATA_COPY) ||
-				region_overlap(pg_start, pg_len, TEXT_BASE, pg_len * 4))) {
-		/*
-		 * copy piggydata binary to its link address
-		 */
-		memcpy(&input_data, (void *)pg_start, pg_len);
-		pg_start = (uint32_t)&input_data;
-	}
 
 	setup_c();
 
@@ -145,6 +128,9 @@ static noinline void __barebox_arm_entry(uint32_t membase, uint32_t memsize,
 	if (use_mmu)
 		mmu_enable(membase, memsize);
 
+	pg_start = (uint32_t)&input_data;
+	pg_end = (uint32_t)&input_data_end;
+	pg_len = pg_end - pg_start;
 	decompress((void *)pg_start,
 			pg_len,
 			NULL, NULL,

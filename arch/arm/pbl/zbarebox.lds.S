@@ -59,17 +59,17 @@ SECTIONS
 	.data : { *(.data*) }
 
 	. = ALIGN(4);
-	__bss_start = .;
-	.bss : { *(.bss*) }
-	__bss_stop = .;
-	_end = .;
-
-	. = ALIGN(4);
 	__piggydata_start = .;
 	.piggydata : {
 		*(.piggydata)
 	}
 	__piggydata_end = .;
+
+	. = ALIGN(4);
+	__bss_start = .;
+	.bss : { *(.bss*) }
+	__bss_stop = .;
+	_end = .;
 
 	_barebox_image_size = __piggydata_end - HEAD_TEXT_BASE;
 	_barebox_pbl_size = __bss_start - HEAD_TEXT_BASE;
