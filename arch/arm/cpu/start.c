@@ -26,17 +26,23 @@
 #include <asm/cache.h>
 #include <memory.h>
 
-static noinline __naked void __start(uint32_t membase, uint32_t memsize,
+static noinline void __start(uint32_t membase, uint32_t memsize,
 		uint32_t boarddata)
 {
-	arm_setup_stack(STACK_BASE + STACK_SIZE - 16);
-
 	setup_c();
 
 	mem_malloc_init((void *)MALLOC_BASE,
 			(void *)(MALLOC_BASE + MALLOC_SIZE - 1));
 
 	start_barebox();
+}
+
+#ifndef CONFIG_PBL_IMAGE
+
+void __naked __section(.text_entry) start(uint32_t membase, uint32_t memsize,
+		uint32_t boarddata)
+{
+	barebox_arm_head();
 }
 
 /*
@@ -49,18 +55,20 @@ static noinline __naked void __start(uint32_t membase, uint32_t memsize,
 void __naked barebox_arm_entry(uint32_t membase, uint32_t memsize,
 		uint32_t boarddata)
 {
+	arm_setup_stack(membase + memsize - 8);
+
 	__start(membase, memsize, boarddata);
 }
 
+#else
+
 /*
  * First function in the uncompressed image. We get here from
- * the pbl.
+ * the pbl. The stack already has been set up by the pbl.
  */
-void __naked __section(.text_entry) start(void)
+void __naked __section(.text_entry) start(uint32_t membase, uint32_t memsize,
+		uint32_t boarddata)
 {
-#ifdef CONFIG_PBL_IMAGE
-	__start(0, 0, 0);
-#else
-	barebox_arm_head();
-#endif
+	__start(membase, memsize, boarddata);
 }
+#endif
