@@ -30,6 +30,7 @@
 #include <mach/weim.h>
 #include <partition.h>
 #include <fs.h>
+#include <sizes.h>
 #include <fcntl.h>
 #include <generated/mach-types.h>
 #include <mach/imx-nand.h>
@@ -107,7 +108,7 @@ core_initcall(imx21ads_timing_init);
 
 static int mx21ads_mem_init(void)
 {
-	arm_add_mem_device("ram0", 0xc0000000, 64 * 1024 * 1024);
+	arm_add_mem_device("ram0", 0xc0000000, SZ_64M);
 
 	return 0;
 }
@@ -194,7 +195,7 @@ console_initcall(mx21ads_console_init);
 void __bare_init nand_boot(void)
 {
 	imx_nand_load_image(_text, barebox_image_size);
-	board_init_lowlevel_return();
+	barebox_arm_entry(0xc0000000, SZ_64M, 0);
 }
 #endif
 

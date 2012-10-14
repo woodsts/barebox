@@ -58,7 +58,7 @@ static void __bare_init __naked insdram(void)
 
 	imx_nand_load_image(_text, barebox_image_size);
 
-	board_init_lowlevel_return();
+	imx35_barebox_entry();
 }
 #endif
 
@@ -257,7 +257,7 @@ void __bare_init __naked reset(void)
 	/* Skip SDRAM initialization if we run from RAM */
 	r0 = get_pc();
 	if (r0 > 0x80000000 && r0 < 0x90000000)
-		board_init_lowlevel_return();
+		goto out;
 
 	/* Configure drive strength */
 
@@ -333,7 +333,7 @@ void __bare_init __naked reset(void)
 	/* skip NAND boot if not running from NFC space */
 	r0 = get_pc();
 	if (r0 < MX35_NFC_BASE_ADDR || r0 > MX35_NFC_BASE_ADDR + 0x800)
-		board_init_lowlevel_return();
+		goto out;
 
 	src = (unsigned int *)MX35_NFC_BASE_ADDR;
 	trg = (unsigned int *)_text;
@@ -345,8 +345,7 @@ void __bare_init __naked reset(void)
 	/* Jump to SDRAM */
 	r0 = (unsigned int)&insdram;
 	__asm__ __volatile__("mov pc, %0" : : "r"(r0));
-#else
-	board_init_lowlevel_return();
 #endif
+out:
+	imx35_barebox_entry(0);
 }
-

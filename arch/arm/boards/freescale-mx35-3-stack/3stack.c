@@ -30,6 +30,7 @@
 #include <init.h>
 #include <nand.h>
 #include <net.h>
+#include <sizes.h>
 #include <partition.h>
 
 #include <asm/armlinux.h>
@@ -130,8 +131,8 @@ static void set_board_rev(int rev)
 
 static int f3s_mem_init(void)
 {
-	arm_add_mem_device("ram0", MX35_CSD0_BASE_ADDR, 128 * 1024 * 1024);
-	arm_add_mem_device("ram1", MX35_CSD1_BASE_ADDR, 128 * 1024 * 1024);
+	arm_add_mem_device("ram0", MX35_CSD0_BASE_ADDR, SZ_128M);
+	arm_add_mem_device("ram1", MX35_CSD1_BASE_ADDR, SZ_128M);
 
 	return 0;
 }
@@ -445,6 +446,6 @@ void __bare_init nand_boot(void)
 	 * fuses or external pull ups. But not the blocksize...
 	 */
 	imx_nand_load_image(_text, barebox_image_size);
-	board_init_lowlevel_return();
+	imx35_barebox_entry(MX35_CSD0_BASE_ADDR, SZ_128M);
 }
 #endif

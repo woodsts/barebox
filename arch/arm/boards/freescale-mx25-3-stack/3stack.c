@@ -292,7 +292,7 @@ console_initcall(imx25_console_init);
 void __bare_init nand_boot(void)
 {
 	imx_nand_load_image(_text, barebox_image_size);
-	board_init_lowlevel_return();
+	imx25_barebox_entry();
 }
 #endif
 

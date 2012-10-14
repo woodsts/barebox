@@ -81,7 +81,7 @@ reset:
 	cmp	pc, #0xc0000000
 	bhi	1f
 
-	b	board_init_lowlevel_return
+	b	imx27_barebox_entry
 
 1:
 	/* 399 MHz */
@@ -133,10 +133,9 @@ copy_loop:
 	ldr	r0,=_text
 	ldr	r1,=_barebox_image_size
 	bl	imx_nand_load_image
-	b	board_init_lowlevel_return
 
 #endif /* CONFIG_NAND_IMX_BOOT */
 
 ret:
-	b	board_init_lowlevel_return
+	b	imx27_barebox_entry
 

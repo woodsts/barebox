@@ -95,7 +95,7 @@ clear_iomux:
 	cmp	pc, #0x90000000
 	bhs	1f
 
-	b	board_init_lowlevel_return
+	b	imx31_barebox_entry
 1:
 
 #if defined CONFIG_PCM037_SDRAM_BANK0_128MB
@@ -164,5 +164,5 @@ copy_loop:
 ret:
 #endif /* CONFIG_NAND_IMX_BOOT */
 
-	b	board_init_lowlevel_return
+	b	imx31_barebox_entry
 

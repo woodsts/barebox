@@ -267,7 +267,7 @@ late_initcall(eukrea_cpuimx27_late_init);
 void __bare_init nand_boot(void)
 {
 	imx_nand_load_image(_text, barebox_image_size);
-	board_init_lowlevel_return();
+	imx27_barebox_entry();
 }
 #endif
 
