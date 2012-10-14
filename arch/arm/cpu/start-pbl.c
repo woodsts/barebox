@@ -156,11 +156,8 @@ static void barebox_uncompress(void *compressed_start, unsigned int len)
 	barebox();
 }
 
-/*
- * Board code can jump here by either returning from board_init_lowlevel
- * or by calling this function directly.
- */
-void __naked board_init_lowlevel_return(void)
+static noinline void __barebox_arm_entry(uint32_t membase, uint32_t memsize,
+		uint32_t boarddata)
 {
 	uint32_t offset;
 	uint32_t pg_start, pg_end, pg_len;
@@ -199,5 +196,5 @@ void __naked board_init_lowlevel_return(void)
 void __naked barebox_arm_entry(uint32_t membase, uint32_t memsize,
 		uint32_t boarddata)
 {
-	board_init_lowlevel_return();
+	__barebox_arm_entry(membase, memsize, boarddata);
 }

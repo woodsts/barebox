@@ -26,24 +26,8 @@
 #include <asm/cache.h>
 #include <memory.h>
 
-/*
- * First function in the uncompressed image. We get here from
- * the pbl.
- */
-void __naked __section(.text_entry) start(void)
-{
-#ifdef CONFIG_PBL_IMAGE
-	board_init_lowlevel_return();
-#else
-	barebox_arm_head();
-#endif
-}
-
-/*
- * Board code can jump here by either returning from board_init_lowlevel
- * or by calling this function directly.
- */
-void __naked board_init_lowlevel_return(void)
+static noinline __naked void __start(uint32_t membase, uint32_t memsize,
+		uint32_t boarddata)
 {
 	arm_setup_stack(STACK_BASE + STACK_SIZE - 16);
 
@@ -63,7 +47,20 @@ void __naked board_init_lowlevel_return(void)
  * be preserved and can be accessed later with barebox_arm_boarddata().
  */
 void __naked barebox_arm_entry(uint32_t membase, uint32_t memsize,
-                uint32_t boarddata)
+		uint32_t boarddata)
 {
-	board_init_lowlevel_return();
+	__start(membase, memsize, boarddata);
+}
+
+/*
+ * First function in the uncompressed image. We get here from
+ * the pbl.
+ */
+void __naked __section(.text_entry) start(void)
+{
+#ifdef CONFIG_PBL_IMAGE
+	__start(0, 0, 0);
+#else
+	barebox_arm_head();
+#endif
 }
