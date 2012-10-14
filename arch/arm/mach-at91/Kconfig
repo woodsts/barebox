@@ -114,6 +114,9 @@ config SUPPORT_CALAO_MOB_TNY_MD2
 config HAVE_AT91SAM926X_LOWLEVEL_INIT
 	bool
 
+config HAVE_AT91RM9200_LOWLEVEL_INIT
+	bool
+
 # ----------------------------------------------------------
 
 if ARCH_AT91RM9200

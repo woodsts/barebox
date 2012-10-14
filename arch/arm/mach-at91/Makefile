@@ -1,10 +1,7 @@
 obj-y += clock.o gpio.o
 
-lowlevel_init-$(CONFIG_ARCH_AT91RM9200) = at91rm9200_lowlevel_init.o
-obj-$(CONFIG_MACH_DO_LOWLEVEL_INIT) += $(lowlevel_init-y)
-
-pbl-$(CONFIG_MACH_DO_LOWLEVEL_INIT) += $(lowlevel_init-y)
-
+obj-$(CONFIG_HAVE_AT91RM9200_LOWLEVEL_INIT) += at91rm9200_lowlevel_init.o
+pbl-$(CONFIG_HAVE_AT91RM9200_LOWLEVEL_INIT) += at91rm9200_lowlevel_init.o
 obj-$(CONFIG_HAVE_AT91SAM926X_LOWLEVEL_INIT) += at91sam926x_lowlevel_init.o
 pbl-$(CONFIG_HAVE_AT91SAM926X_LOWLEVEL_INIT) += at91sam926x_lowlevel_init.o
 

@@ -21,12 +21,15 @@ void static inline access_sdram(void)
 	writel(0x00000000, AT91_SDRAM_BASE);
 }
 
-void __naked __bare_init reset(void)
+void __naked __bare_init at91rm9200_entry(unsigned long sdram_base,
+		unsigned long sdram_size)
 {
-	u32 r;
+	u32 r, pc;
 	int i;
 
-	common_reset();
+	pc = get_pc();
+	if (pc < AT91_SDRAM_BASE || pc > AT91_SDRAM_BASE + 0x10000000)
+		goto end;
 
 	/*
 	 * PMC Check if the PLL is already initialized
