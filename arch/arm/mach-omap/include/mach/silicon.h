@@ -28,6 +28,7 @@
 /* If Architecture specific init functions are present */
 #ifndef __ASSEMBLY__
 void omap3_core_init(void);
+void omap3_invalidate_dcache(void);
 #endif /* __ASSEMBLY__ */
 
 #endif /* __ASM_ARCH_OMAP_SILICON_H */

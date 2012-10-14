@@ -13,6 +13,7 @@
 #include <common.h>
 #include <io.h>
 #include <init.h>
+#include <sizes.h>
 #include <mach/omap4-mux.h>
 #include <mach/omap4-silicon.h>
 #include <mach/omap4-clock.h>
@@ -63,7 +64,8 @@ static noinline void archosg9_init_lowlevel(void)
 
 	/* Set VCORE1 = 1.3 V, VCORE2 = VCORE3 = 1.21V */
 	omap4_scale_vcores(TPS62361_VSEL0_GPIO);
-	board_init_lowlevel_return();
+
+	barebox_arm_entry(0x80000000, SZ_1G, 0);
 }
 
 void __naked __bare_init reset(void)

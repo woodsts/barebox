@@ -38,11 +38,9 @@
 #include <mach/clocks.h>
 #include <asm/barebox-arm-head.h>
 
-#ifdef CONFIG_MACH_DO_LOWLEVEL_INIT
-.section .text.__reset
-ENTRY(reset)
+.section .text.__omap3_invalidate_dcache
+ENTRY(omap3_invalidate_dcache)
 	/* Invalidate all Dcaches */
-#ifndef CONFIG_CPU_V7_DCACHE_SKIP
 	/* If Arch specific ROM code SMI handling does not exist */
 	mrc	p15, 1, r0, c0, c0, 1	/* read clidr */
 	ands	r3, r0, #0x7000000	/* extract loc from clidr */
@@ -87,8 +85,7 @@ finished_inval:
 	mov	r10, #0			/* swith back to cache level 0 */
 	mcr	p15, 2, r10, c0, c0, 0	/* select current cache level in cssr */
 	isb
-#endif /* CONFIG_CPU_V7_DCACHE_SKIP */
+
 	/* back to arch calling code */
-	b board_init_lowlevel_return
-ENDPROC(reset)
-#endif
+	bx lr
+ENDPROC(omap3_invalidate_dcache)
