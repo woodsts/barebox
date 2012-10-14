@@ -34,12 +34,17 @@ static void inline pmc_check_mckrdy(void)
 	} while (!(r & AT91_PMC_MCKRDY));
 }
 
-void __naked __bare_init reset(void)
+void __naked __bare_init at91sam926x_entry(unsigned long sdram_base,
+		unsigned long sdram_size)
 {
+	uint32_t pc;
 	u32 r;
 	int i;
 
-	common_reset();
+	pc = get_pc();
+
+	if (pc < AT91_SDRAM_BASE || pc > AT91_SDRAM_BASE + 0x10000000)
+		goto end;
 
 	at91_sys_write(AT91_WDT_MR, CONFIG_SYS_WDTC_WDMR_VAL);
 

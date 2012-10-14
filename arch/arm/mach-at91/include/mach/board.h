@@ -161,4 +161,7 @@ struct at91_spi_platform_data {
 };
 
 void at91_add_device_spi(int spi_id, struct at91_spi_platform_data *pdata);
+
+void at91sam926x_entry(unsigned long sdram_base, unsigned long sdram_size);
+
 #endif
