@@ -120,47 +120,13 @@ static void noinline errorfn(char *error)
 	while (1);
 }
 
-static void barebox_uncompress(void *compressed_start, unsigned int len)
-{
-	void (*barebox)(void);
-	/*
-	 * remap_cached currently does not work rendering the feature
-	 * of enabling the MMU in the PBL useless. disable for now.
-	 */
-	int use_mmu = 0;
-
-	/* set 128 KiB at the end of the MALLOC_BASE for early malloc */
-	free_mem_ptr = MALLOC_BASE + MALLOC_SIZE - SZ_128K;
-	free_mem_end_ptr = free_mem_ptr + SZ_128K;
-
-	ttb = (void *)((free_mem_ptr - 0x4000) & ~0x3fff);
-
-	if (use_mmu)
-		mmu_enable((unsigned long)compressed_start, len);
-
-	if (IS_ENABLED(CONFIG_THUMB2_BAREBOX))
-		barebox = (void *)(TEXT_BASE + 1);
-	else
-		barebox = (void *)TEXT_BASE;
-
-	decompress((void *)compressed_start,
-			len,
-			NULL, NULL,
-			(void *)TEXT_BASE, NULL, errorfn);
-
-	if (use_mmu)
-		mmu_disable();
-
-	flush_icache();
-
-	barebox();
-}
-
 static noinline void __barebox_arm_entry(uint32_t membase, uint32_t memsize,
 		uint32_t boarddata)
 {
+	void (*barebox)(uint32_t, uint32_t, uint32_t);
 	uint32_t offset;
 	uint32_t pg_start, pg_end, pg_len;
+	int use_mmu = 0;
 
 	/* Get offset between linked address and runtime address */
 	offset = get_runtime_offset();
@@ -180,7 +146,31 @@ static noinline void __barebox_arm_entry(uint32_t membase, uint32_t memsize,
 
 	setup_c();
 
-	barebox_uncompress((void *)pg_start, pg_len);
+	/* set 128 KiB at the end of the MALLOC_BASE for early malloc */
+	free_mem_ptr = membase + memsize - SZ_256K;
+	free_mem_end_ptr = free_mem_ptr + SZ_128K;
+
+	ttb = (void *)((free_mem_ptr - 0x4000) & ~0x3fff);
+
+	if (use_mmu)
+		mmu_enable(membase, memsize);
+
+	decompress((void *)pg_start,
+			pg_len,
+			NULL, NULL,
+			(void *)TEXT_BASE, NULL, errorfn);
+
+	if (use_mmu)
+		mmu_disable();
+
+	flush_icache();
+
+	if (IS_ENABLED(CONFIG_THUMB2_BAREBOX))
+		barebox = (void *)(TEXT_BASE + 1);
+	else
+		barebox = (void *)TEXT_BASE;
+
+	barebox(membase, memsize, boarddata);
 }
 
 /*
