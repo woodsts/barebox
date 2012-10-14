@@ -175,5 +175,5 @@ void __naked __bare_init at91sam926x_entry(unsigned long sdram_base,
 #endif
 
 end:
-	board_init_lowlevel_return();
+	barebox_arm_entry(sdram_base, sdram_size, 0);
 }
