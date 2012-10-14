@@ -26,6 +26,18 @@
 #include <asm/cache.h>
 #include <memory.h>
 
+static uint32_t __barebox_arm_boarddata;
+
+/*
+ * the board specific lowlevel init code can pass a pointer or
+ * data value to barebox_arm_entry() and pick it up later with
+ * this function.
+ */
+uint32_t barebox_arm_boarddata(void)
+{
+	return __barebox_arm_boarddata;
+}
+
 static noinline void __start(uint32_t membase, uint32_t memsize,
 		uint32_t boarddata)
 {
@@ -33,6 +45,8 @@ static noinline void __start(uint32_t membase, uint32_t memsize,
 
 	mem_malloc_init((void *)MALLOC_BASE,
 			(void *)(MALLOC_BASE + MALLOC_SIZE - 1));
+
+	__barebox_arm_boarddata = boarddata;
 
 	start_barebox();
 }
