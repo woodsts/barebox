@@ -49,8 +49,6 @@ config ARCH_AT91RM9200
 	bool "AT91RM9200"
 	select CPU_ARM920T
 	select HAS_AT91_ETHER
-	select MACH_HAS_LOWLEVEL_INIT
-	select MACH_DO_LOWLEVEL_INIT
 
 config ARCH_AT91SAM9260
 	bool "AT91SAM9260"
@@ -194,8 +192,6 @@ config MACH_PM9261
 	bool "Ronetix PM9261"
 	select HAVE_AT91SAM926X_LOWLEVEL_INIT
 	select HAS_DM9000
-	select MACH_HAS_LOWLEVEL_INIT
-	select MACH_DO_LOWLEVEL_INIT
 	help
 	  Say y here if you are using the Ronetix PM9261 Board
 
@@ -271,8 +267,6 @@ choice
 
 config MACH_AT91SAM9263EK
 	bool "Atmel AT91SAM9263-EK"
-	select MACH_HAS_LOWLEVEL_INIT
-	select MACH_DO_LOWLEVEL_INIT
 	select HAVE_NAND_ATMEL_BUSWIDTH_16
 	select HAVE_AT91SAM926X_LOWLEVEL_INIT
 	help
@@ -286,8 +280,6 @@ config MACH_MMCCPU
 
 config MACH_PM9263
 	bool "Ronetix PM9263"
-	select MACH_HAS_LOWLEVEL_INIT
-	select MACH_DO_LOWLEVEL_INIT
 	select HAVE_AT91SAM926X_LOWLEVEL_INIT
 	help
 	  Say y here if you are using the Ronetix PM9263 Board
