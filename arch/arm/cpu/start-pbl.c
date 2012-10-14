@@ -162,9 +162,6 @@ static noinline void __barebox_arm_entry(uint32_t membase, uint32_t memsize,
 	uint32_t offset;
 	uint32_t pg_start, pg_end, pg_len;
 
-	/* Setup the stack */
-	arm_setup_stack(STACK_BASE + STACK_SIZE - 16);
-
 	/* Get offset between linked address and runtime address */
 	offset = get_runtime_offset();
 
@@ -196,5 +193,7 @@ static noinline void __barebox_arm_entry(uint32_t membase, uint32_t memsize,
 void __naked barebox_arm_entry(uint32_t membase, uint32_t memsize,
 		uint32_t boarddata)
 {
+	arm_setup_stack(membase + memsize - 8);
+
 	__barebox_arm_entry(membase, memsize, boarddata);
 }
