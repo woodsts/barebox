@@ -91,7 +91,7 @@ static void pm_add_device_nand(void)
 
 static struct at91_ether_platform_data macb_pdata = {
 	.flags = AT91SAM_ETHER_RMII,
-	.phy_addr = 0,
+	.phy_addr = -1,
 };
 
 static void pm9263_phy_init(void)
