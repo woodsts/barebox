@@ -29,6 +29,8 @@
 
 static uint32_t __barebox_arm_boarddata;
 
+unsigned long arm_stack_top;
+
 /*
  * the board specific lowlevel init code can pass a pointer or
  * data value to barebox_arm_entry() and pick it up later with
@@ -84,6 +86,8 @@ static noinline void __start(uint32_t membase, uint32_t memsize,
 
 	mem_malloc_init((void *)malloc_start,
 			(void *)malloc_end);
+
+	arm_stack_top = membase + memsize;
 
 	__barebox_arm_boarddata = boarddata;
 

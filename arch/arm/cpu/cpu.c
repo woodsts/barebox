@@ -91,6 +91,15 @@ void arch_shutdown(void)
 	__asm__ __volatile__("msr cpsr, %0" : : "r"(r));
 }
 
+extern unsigned long arm_stack_top;
+
+static int arm_request_stack(void)
+{
+	request_sdram_region("stack", arm_stack_top - 0x8000, 0x8000);
+	return 0;
+}
+coredevice_initcall(arm_request_stack);
+
 #ifdef CONFIG_THUMB2_BAREBOX
 static void thumb2_execute(void *func, int argc, char *argv[])
 {
