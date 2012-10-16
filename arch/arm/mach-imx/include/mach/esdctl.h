@@ -26,6 +26,7 @@
 #define ESDCTL0_DSIZ_31_16			(0 << 16)
 #define ESDCTL0_DSIZ_15_0			(1 << 16)
 #define ESDCTL0_DSIZ_31_0			(2 << 16)
+#define ESDCTL0_DSIZ_MASK			(3 << 16)
 #define ESDCTL0_REF1				(1 << 13)
 #define ESDCTL0_REF2				(2 << 13)
 #define ESDCTL0_REF4				(3 << 13)
@@ -124,3 +125,15 @@
 //#define ESDCFGx_tRC_14		0x0000000e	// 15 seems to not exist
 #define ESDCFGx_tRC_16			0x0000000f
 
+#ifndef __ASSEMBLY__
+
+void __naked imx1_barebox_entry(uint32_t boarddata);
+void __naked imx21_barebox_entry(uint32_t boarddata);
+void __naked imx25_barebox_entry(uint32_t boarddata);
+void __naked imx27_barebox_entry(uint32_t boarddata);
+void __naked imx31_barebox_entry(uint32_t boarddata);
+void __naked imx35_barebox_entry(uint32_t boarddata);
+void __naked imx51_barebox_entry(uint32_t boarddata);
+void __naked imx53_barebox_entry(uint32_t boarddata);
+
+#endif
