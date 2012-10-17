@@ -1,3 +1,5 @@
+#ifndef __MACH_GENERIC_H
+#define __MACH_GENERIC_H
 
 u64 imx_uid(void);
 
@@ -168,3 +170,5 @@ extern unsigned int __imx_cpu_type;
 
 #define cpu_is_mx23()	(0)
 #define cpu_is_mx28()	(0)
+
+#endif /* __MACH_GENERIC_H */
