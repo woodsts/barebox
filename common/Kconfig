@@ -477,6 +477,13 @@ config CONSOLE_FULL
 	  once the first console is registered. Recommended for most
 	  usecases.
 
+config CONSOLE_KFIFO_OUTPUT_SIZE
+	prompt "kfifo output size"
+	depends on CONSOLE_FULL
+	int
+	default 4086 if DEBUG_INFO
+	default 1024
+
 choice
 	prompt "Console activation strategy"
 	depends on CONSOLE_FULL

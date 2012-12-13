@@ -48,7 +48,7 @@ static int initialized = 0;
 #define CONSOLE_BUFFER_SIZE	1024
 
 static char console_input_buffer[CONSOLE_BUFFER_SIZE];
-static char console_output_buffer[CONSOLE_BUFFER_SIZE];
+static char console_output_buffer[CONFIG_CONSOLE_KFIFO_OUTPUT_SIZE];
 
 static struct kfifo __console_input_fifo;
 static struct kfifo __console_output_fifo;
@@ -138,7 +138,7 @@ static void console_init_early(void)
 	kfifo_init(console_input_fifo, console_input_buffer,
 			CONSOLE_BUFFER_SIZE);
 	kfifo_init(console_output_fifo, console_output_buffer,
-			CONSOLE_BUFFER_SIZE);
+			CONFIG_CONSOLE_KFIFO_OUTPUT_SIZE);
 
 	initialized = CONSOLE_INITIALIZED_BUFFER;
 }
