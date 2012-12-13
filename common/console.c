@@ -434,3 +434,23 @@ int ctrlc (void)
 }
 EXPORT_SYMBOL(ctrlc);
 #endif /* ARCH_HAS_CTRC */
+
+#include <command.h>
+#include <complete.h>
+
+static int do_dmesg(int argc, char *argv[])
+{
+	kfifo_dump_str(console_output_fifo, console_output_dump);
+
+	return 0;
+}
+
+static const __maybe_unused char cmd_dmesg_help[] =
+"print the barebox output ring buffer\n";
+
+BAREBOX_CMD_START(dmesg)
+	.cmd		= do_dmesg,
+	.usage		= "dmesg",
+	BAREBOX_CMD_HELP(cmd_dmesg_help)
+	BAREBOX_CMD_COMPLETE(empty_complete)
+BAREBOX_CMD_END

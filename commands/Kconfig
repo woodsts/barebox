@@ -115,6 +115,12 @@ config CMD_TIME
 	  checking for ctrl-c, so the time command can be used with commands
 	  which are interruptible with ctrl-c.
 
+config CMD_DMESG
+	bool "dmesg"
+	depends on CONSOLE_FULL
+	  help
+	  print the barebox output ring buffer
+
 config CMD_LINUX_EXEC
 	bool "linux exec"
 	depends on LINUX
