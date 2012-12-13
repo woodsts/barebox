@@ -55,6 +55,11 @@ static struct kfifo __console_output_fifo;
 static struct kfifo *console_input_fifo = &__console_input_fifo;
 static struct kfifo *console_output_fifo = &__console_output_fifo;
 
+static void console_output_dump(unsigned char ch)
+{
+	console_putc(CONSOLE_STDOUT, ch);
+}
+
 static int console_std_set(struct device_d *dev, struct param_d *param,
 		const char *val)
 {
@@ -86,14 +91,12 @@ static int console_std_set(struct device_d *dev, struct param_d *param,
 	dev_param_set_generic(dev, param, active);
 
 	if (initialized < CONSOLE_INIT_FULL) {
-		char ch;
 		initialized = CONSOLE_INIT_FULL;
 		PUTS_LL("Switch to console [");
 		PUTS_LL(dev_name(dev));
 		PUTS_LL("]\n");
 		barebox_banner();
-		while (kfifo_getc(console_output_fifo, &ch) == 0)
-			console_putc(CONSOLE_STDOUT, ch);
+		kfifo_dump_str(console_output_fifo, console_output_dump);
 	}
 
 	return 0;
