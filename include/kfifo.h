@@ -74,5 +74,7 @@ static inline unsigned int kfifo_len(struct kfifo *fifo)
 void kfifo_putc(struct kfifo *fifo, unsigned char c);
 unsigned int kfifo_getc(struct kfifo *fifo, unsigned char *c);
 
+void kfifo_dump_str(struct kfifo *fifo, void (*dump)(unsigned char c));
+
 #endif
 

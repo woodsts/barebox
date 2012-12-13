@@ -154,3 +154,24 @@ unsigned int kfifo_getc(struct kfifo *fifo, unsigned char *c)
 	return 0;
 }
 
+void kfifo_dump_str(struct kfifo *fifo, void (*dump)(unsigned char c))
+{
+	int i;
+	unsigned char *c;
+	unsigned int l;
+	unsigned int len;
+
+	len = fifo->in - fifo->out;
+
+	/* first get the data from fifo->out until the end of the buffer */
+	l = min(len, fifo->size - (fifo->out & (fifo->size - 1)));
+	c = fifo->buffer + (fifo->out & (fifo->size - 1));
+	for (i = 0; i < l; i++)
+		dump(c[i]);
+
+	/* then get the rest (if any) from the beginning of the buffer */
+	c = fifo->buffer;
+	l = len - l;
+	for (i = 0; i < l; i++)
+		dump(c[i]);
+}
