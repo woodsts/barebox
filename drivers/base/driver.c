@@ -370,13 +370,13 @@ int dev_printf(const struct device_d *dev, const char *format, ...)
 	int ret = 0;
 
 	if (dev->driver && dev->driver->name)
-		ret += printf("%s ", dev->driver->name);
+		ret += pr_info("%s ", dev->driver->name);
 
-	ret += printf("%s: ", dev_name(dev));
+	ret += pr_info("%s: ", dev_name(dev));
 
 	va_start(args, format);
 
-	ret += vprintf(format, args);
+	ret += vprintk(format, args);
 
 	va_end(args);
 
