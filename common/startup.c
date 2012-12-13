@@ -98,19 +98,19 @@ void start_barebox (void)
 
 	for (initcall = __barebox_initcalls_start;
 			initcall < __barebox_initcalls_end; initcall++) {
-		debug("initcall-> %pS\n", *initcall);
+		pr_debug("initcall-> %pS\n", *initcall);
 		result = (*initcall)();
 		if (result)
 			pr_err("initcall %pS failed: %s\n", *initcall,
 					strerror(-result));
 	}
 
-	debug("initcalls done\n");
+	pr_debug("initcalls done\n");
 
 #ifdef CONFIG_ENV_HANDLING
 	if (envfs_load(default_environment_path, "/env", 0)) {
 #ifdef CONFIG_DEFAULT_ENVIRONMENT
-		printf("no valid environment found on %s. "
+		pr_info("no valid environment found on %s. "
 			"Using default environment\n",
 			default_environment_path);
 		envfs_load("/dev/defaultenv", "/env", 0);
@@ -118,12 +118,12 @@ void start_barebox (void)
 	}
 #endif
 #ifdef CONFIG_COMMAND_SUPPORT
-	printf("running /env/bin/init...\n");
+	pr_info("running /env/bin/init...\n");
 
 	if (!stat("/env/bin/init", &s)) {
 		run_command("source /env/bin/init", 0);
 	} else {
-		printf("not found\n");
+		pr_err("not found\n");
 	}
 #endif
 	/* main_loop() can return to retry autoboot, if so just run it again. */
