@@ -18,8 +18,6 @@
 #define KERN_INFO       ""   /* informational                        */
 #define KERN_DEBUG      ""   /* debug-level messages                 */
 
-#define printk			printf
-
 #define pr_warn			pr_warning
 
 #define __init

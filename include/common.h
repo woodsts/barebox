@@ -48,21 +48,29 @@
 #error "None of __LITTLE_ENDIAN and __BIG_ENDIAN are defined"
 #endif
 
-#define pr_info(fmt, arg...)	printf(fmt, ##arg)
-#define pr_notice(fmt, arg...)	printf(fmt, ##arg)
-#define pr_err(fmt, arg...)	printf(fmt, ##arg)
-#define pr_warning(fmt, arg...)	printf(fmt, ##arg)
-#define pr_crit(fmt, arg...)	printf(fmt, ##arg)
-#define pr_alert(fmt, arg...)	printf(fmt, ##arg)
-#define pr_emerg(fmt, arg...)	printf(fmt, ##arg)
-
-#ifdef DEBUG
-#define pr_debug(fmt, arg...)	printf(fmt, ##arg)
+#ifdef CONFIG_CMD_DMESG
+int	printk(const char *fmt, ...) __attribute__ ((format(__printf__, 1, 2)));
+int	vprintk(const char *fmt, va_list args);
 #else
-#define pr_debug(fmt, arg...)	do {} while(0)
+#define printk			printf
+#define vprintk			vprintf
 #endif
 
-#define debug(fmt, arg...)	pr_debug(fmt, ##arg)
+#define pr_info(fmt, arg...)	printk(fmt, ##arg)
+#define pr_notice(fmt, arg...)	printk(fmt, ##arg)
+#define pr_err(fmt, arg...)	printk(fmt, ##arg)
+#define pr_warning(fmt, arg...)	printk(fmt, ##arg)
+#define pr_crit(fmt, arg...)	printk(fmt, ##arg)
+#define pr_alert(fmt, arg...)	printk(fmt, ##arg)
+#define pr_emerg(fmt, arg...)	printk(fmt, ##arg)
+
+#ifdef DEBUG
+#define pr_debug(fmt, arg...)	printk(fmt, ##arg)
+#define debug(fmt, arg...)	printf(fmt, ##arg)
+#else
+#define pr_debug(fmt, arg...)	do {} while(0)
+#define debug(fmt, arg...)	do {} while(0)
+#endif
 
 #define BUG() do { \
 	printf("BUG: failure at %s:%d/%s()!\n", __FILE__, __LINE__, __FUNCTION__); \

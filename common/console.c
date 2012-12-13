@@ -435,6 +435,7 @@ int ctrlc (void)
 EXPORT_SYMBOL(ctrlc);
 #endif /* ARCH_HAS_CTRC */
 
+#ifdef CONFIG_CMD_DMESG
 #include <command.h>
 #include <complete.h>
 
@@ -454,3 +455,49 @@ BAREBOX_CMD_START(dmesg)
 	BAREBOX_CMD_HELP(cmd_dmesg_help)
 	BAREBOX_CMD_COMPLETE(empty_complete)
 BAREBOX_CMD_END
+
+int vprintk (const char *fmt, va_list args)
+{
+	uint i;
+	char printbuffer[CFG_PBSIZE];
+	char *s = printbuffer;
+
+	/* For this to work, printbuffer must be larger than
+	 * anything we ever want to print.
+	 */
+	i = vsprintf (printbuffer, fmt, args);
+
+	/* Print the string */
+	puts (printbuffer);
+
+	if (initialized < CONSOLE_INIT_FULL)
+		return i;
+
+	while (*s) {
+		if (*s == '\n')
+			kfifo_putc(console_output_fifo, '\r');
+		kfifo_putc(console_output_fifo, *s);
+		s++;
+	}
+
+	return i;
+}
+EXPORT_SYMBOL(vprintk);
+
+int printk (const char *fmt, ...)
+{
+	va_list args;
+	uint i;
+
+	va_start (args, fmt);
+
+	i = vprintk(fmt, args);
+	/* For this to work, printbuffer must be larger than
+	 * anything we ever want to print.
+	 */
+	va_end (args);
+
+	return i;
+}
+EXPORT_SYMBOL(printk);
+#endif
