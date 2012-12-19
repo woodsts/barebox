@@ -185,7 +185,7 @@ static int netconsole_init(void)
 
 	ret = console_register(cdev);
 	if (ret) {
-		printf("netconsole: registering failed with %s\n", strerror(-ret));
+		pr_err("netconsole: registering failed with %s\n", strerror(-ret));
 		kfree(priv);
 		return ret;
 	}
@@ -194,7 +194,7 @@ static int netconsole_init(void)
 	dev_add_param(&cdev->class_dev, "port", nc_port_set, NULL, 0);
 	dev_set_param(&cdev->class_dev, "port", "6666");
 
-	printf("registered netconsole as %s%d\n", cdev->class_dev.name, cdev->class_dev.id);
+	pr_info("registered netconsole as %s%d\n", cdev->class_dev.name, cdev->class_dev.id);
 
 	return 0;
 }
