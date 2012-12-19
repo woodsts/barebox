@@ -644,6 +644,22 @@ endmenu
 
 menu "Debugging"
 
+config COMPILE_LOGLEVEL
+	int "loglevel"
+	default 6
+	help
+	  This defines the maximum loglevel compiled into the binary. Less important
+	  messages will never be seen
+
+	  0    system is unusable
+	  1    action must be taken immediately
+	  2    critical conditions
+	  3    error conditions
+	  4    warning conditions
+	  5    normal but significant condition
+	  6    informational
+	  7    debug-level messages
+
 config DEBUG_INFO
 	bool
 	prompt "enable debug symbols"
