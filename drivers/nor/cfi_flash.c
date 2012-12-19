@@ -143,18 +143,18 @@ static void flash_printqry (struct cfi_qry *qry)
 	unsigned char c;
 
 	for (x = 0; x < sizeof(struct cfi_qry); x += 16) {
-		debug("%02x : ", x);
+		pr_debug("%02x : ", x);
 		for (y = 0; y < 16; y++)
-			debug("%2.2x ", p[x + y]);
-		debug(" ");
+			pr_debug("%2.2x ", p[x + y]);
+		pr_debug(" ");
 		for (y = 0; y < 16; y++) {
 			c = p[x + y];
 			if (c >= 0x20 && c <= 0x7e)
-				debug("%c", c);
+				pr_debug("%c", c);
 			else
-				debug(".");
+				pr_debug(".");
 		}
-		debug("\n");
+		pr_debug("\n");
 	}
 }
 #endif
@@ -339,7 +339,7 @@ static ulong flash_get_size (struct flash_info *info)
 			break;
 #endif
 		default:
-			printf("unsupported vendor\n");
+			dev_err(info->cdev.dev, "unsupported vendor\n");
 			return 0;
 		}
 		info->cfi_cmd_set->flash_read_jedec_ids (info);
@@ -372,19 +372,19 @@ static ulong flash_get_size (struct flash_info *info)
 			struct mtd_erase_region_info *region = &info->eraseregions[i];
 
 			if (i > NUM_ERASE_REGIONS) {
-				printf ("%d erase regions found, only %d used\n",
+				dev_warn(info->cdev.dev, "%d erase regions found, only %d used\n",
 					num_erase_regions, NUM_ERASE_REGIONS);
 				break;
 			}
 
 			tmp = le32_to_cpu(qry.erase_region_info[i]);
-			debug("erase region %u: 0x%08lx\n", i, tmp);
+			dev_dbg(info->cdev.dev, "erase region %u: 0x%08lx\n", i, tmp);
 
 			erase_region_count = (tmp & 0xffff) + 1;
 			tmp >>= 16;
 			erase_region_size =
 				(tmp & 0xffff) ? ((tmp & 0xffff) * 256) : 128;
-			debug ("erase_region_count = %d erase_region_size = %d\n",
+			dev_dbg(info->cdev.dev, "erase_region_count = %d erase_region_size = %d\n",
 				erase_region_count, erase_region_size);
 
 			region->offset = cur_offset;
@@ -461,7 +461,7 @@ static int __cfi_erase(struct cdev *cdev, size_t count, loff_t offset,
         unsigned long start, end;
         int i, ret = 0;
 
-	debug("%s: erase 0x%08lx (size %d)\n", __func__, offset, count);
+	dev_dbg(finfo->cdev.dev, "%s: erase 0x%08llx (size %d)\n", __func__, offset, count);
 
         start = find_sector(finfo, (unsigned long)finfo->base + offset);
         end   = find_sector(finfo, (unsigned long)finfo->base + offset +
@@ -633,7 +633,7 @@ static int cfi_protect(struct cdev *cdev, size_t count, loff_t offset, int prot)
 	int i, ret = 0;
 	const char *action = (prot? "protect" : "unprotect");
 
-	printf("%s: %s 0x%p (size %d)\n", __func__,
+	dev_dbg(finfo->cdev.dev, "%s: %s 0x%p (size %d)\n", __func__,
 	       action, finfo->base + offset, count);
 
 	start = find_sector(finfo, (unsigned long)finfo->base + offset);
@@ -645,7 +645,6 @@ static int cfi_protect(struct cdev *cdev, size_t count, loff_t offset, int prot)
 			goto out;
 	}
 out:
-	putchar('\n');
 	return ret;
 }
 
@@ -654,7 +653,8 @@ static ssize_t cfi_write(struct cdev *cdev, const void *buf, size_t count, loff_
         struct flash_info *finfo = (struct flash_info *)cdev->priv;
         int ret;
 
-	debug("cfi_write: buf=0x%p addr=0x%08lx count=0x%08x\n",buf, finfo->base + offset, count);
+	dev_dbg(finfo->cdev.dev, "cfi_write: buf=0x%p addr=0x%p count=0x%08x\n",
+			buf, finfo->base + offset, count);
 
 	ret = write_buff(finfo, buf, (unsigned long)finfo->base + offset, count);
 	return ret == 0 ? count : -1;
@@ -804,7 +804,7 @@ int flash_generic_status_check (struct flash_info *info, flash_sect_t sector,
 	start = get_time_ns();
 	while (info->cfi_cmd_set->flash_is_busy (info, sector)) {
 		if (is_timeout(start, tout)) {
-			printf ("Flash %s timeout at address %lx data %lx\n",
+			dev_err(info->cdev.dev, "Flash %s timeout at address %lx data %lx\n",
 				prompt, info->start[sector],
 				flash_read_long (info, sector, 0));
 			flash_write_cmd (info, sector, 0, info->cmd_reset);
@@ -840,7 +840,8 @@ void flash_write_cmd(struct flash_info *info, flash_sect_t sect,
 
 	addr = flash_make_addr (info, sect, offset);
 	flash_make_cmd (info, cmd, &cword);
-	debug("%s: %p %lX %X => %p %llX\n", __FUNCTION__, info, sect, offset, addr, cword);
+	dev_dbg(info->cdev.dev, "%s: 0x%p 0x%lx 0x%x => %p 0x%lx\n",
+			__func__, info, sect, offset, addr, cword);
 	flash_write_word(info, cword, addr);
 }
 
@@ -854,15 +855,15 @@ int flash_isequal(struct flash_info *info, flash_sect_t sect,
 	addr = flash_make_addr (info, sect, offset);
 	flash_make_cmd (info, cmd, &cword);
 
-	debug ("is= cmd %x(%c) addr %p ", cmd, cmd, addr);
+	dev_dbg(info->cdev.dev, "is= cmd %x(%c) addr %p ", cmd, cmd, addr);
 	if (bankwidth_is_1(info)) {
-		debug ("is= %x %x\n", flash_read8(addr), (u8)cword);
+		dev_dbg(info->cdev.dev, "is= %x %x\n", flash_read8(addr), (u8)cword);
 		retval = (flash_read8(addr) == cword);
 	} else if (bankwidth_is_2(info)) {
-		debug ("is= %4.4x %4.4x\n", flash_read16(addr), (u16)cword);
+		dev_dbg(info->cdev.dev, "is= %4.4x %4.4x\n", flash_read16(addr), (u16)cword);
 		retval = (flash_read16(addr) == cword);
 	} else if (bankwidth_is_4(info)) {
-		debug ("is= %8.8lx %8.8lx\n", flash_read32(addr), (u32)cword);
+		dev_dbg(info->cdev.dev, "is= %8.8lx %8.8lx\n", flash_read32(addr), (u32)cword);
 		retval = (flash_read32(addr) == cword);
 	} else if (bankwidth_is_8(info)) {
 #ifdef DEBUG
@@ -872,7 +873,7 @@ int flash_isequal(struct flash_info *info, flash_sect_t sect,
 
 			print_longlong (str1, flash_read32(addr));
 			print_longlong (str2, cword);
-			debug ("is= %s %s\n", str1, str2);
+			dev_dbg(info->cdev.dev, "is= %s %s\n", str1, str2);
 		}
 #endif
 		retval = (flash_read64(addr) == cword);
@@ -987,7 +988,7 @@ static int cfi_probe (struct device_d *dev)
 	info->size = flash_get_size(info);
 
 	if (info->flash_id == FLASH_UNKNOWN) {
-		printf ("## Unknown FLASH on Bank at 0x%08x - Size = 0x%08lx = %ld MB\n",
+		dev_err(dev, "## Unknown FLASH on Bank at 0x%08x - Size = 0x%08lx = %ld MB\n",
 			dev->resource[0].start, info->size, info->size << 20);
 		return -ENODEV;
 	}
