@@ -29,6 +29,7 @@
 #include <linux/kernel.h>
 #include <linux/stddef.h>
 #include <asm/common.h>
+#include <printk.h>
 
 /*
  * sanity check. The Linux Kernel defines only one of __LITTLE_ENDIAN and
@@ -54,22 +55,6 @@ int	vprintk(const char *fmt, va_list args);
 #else
 #define printk			printf
 #define vprintk			vprintf
-#endif
-
-#define pr_info(fmt, arg...)	printk(fmt, ##arg)
-#define pr_notice(fmt, arg...)	printk(fmt, ##arg)
-#define pr_err(fmt, arg...)	printk(fmt, ##arg)
-#define pr_warning(fmt, arg...)	printk(fmt, ##arg)
-#define pr_crit(fmt, arg...)	printk(fmt, ##arg)
-#define pr_alert(fmt, arg...)	printk(fmt, ##arg)
-#define pr_emerg(fmt, arg...)	printk(fmt, ##arg)
-
-#ifdef DEBUG
-#define pr_debug(fmt, arg...)	printk(fmt, ##arg)
-#define debug(fmt, arg...)	printf(fmt, ##arg)
-#else
-#define pr_debug(fmt, arg...)	do {} while(0)
-#define debug(fmt, arg...)	do {} while(0)
 #endif
 
 #define BUG() do { \
