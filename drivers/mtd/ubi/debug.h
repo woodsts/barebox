@@ -39,7 +39,7 @@
 #ifdef CONFIG_MTD_UBI_DEBUG_MSG
 /* Generic debugging message */
 #define dbg_msg(fmt, ...)                                    \
-	printk(KERN_DEBUG "UBI DBG: %s: " fmt "\n", \
+	pr_debug("UBI DBG: %s: " fmt "\n", \
 	       __FUNCTION__, ##__VA_ARGS__)
 
 #define ubi_dbg_dump_stack() dump_stack()
