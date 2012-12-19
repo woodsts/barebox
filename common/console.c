@@ -456,6 +456,9 @@ BAREBOX_CMD_START(dmesg)
 	BAREBOX_CMD_COMPLETE(empty_complete)
 BAREBOX_CMD_END
 
+int loglevel_console = 6; //CONFIG_COMPILE_LOGLEVEL;
+int loglevel_dmesg = 6; //CONFIG_COMPILE_LOGLEVEL;
+
 int vprintk (const char *fmt, va_list args)
 {
 	uint i;
@@ -471,6 +474,40 @@ int vprintk (const char *fmt, va_list args)
 	puts (printbuffer);
 
 	if (initialized < CONSOLE_INIT_FULL)
+		return i;
+
+	while (*s) {
+		if (*s == '\n')
+			kfifo_putc(console_output_fifo, '\r');
+		kfifo_putc(console_output_fifo, *s);
+		s++;
+	}
+
+	return i;
+}
+EXPORT_SYMBOL(vprintk);
+
+int vprintk_level(int level, const char *fmt, va_list args)
+{
+	uint i;
+	char printbuffer[CFG_PBSIZE];
+	char *s = printbuffer;
+
+	if (level > loglevel_dmesg)
+		return 0;
+
+	/* For this to work, printbuffer must be larger than
+	 * anything we ever want to print.
+	 */
+	i = vsprintf (printbuffer, fmt, args);
+
+	if (level <= loglevel_console)
+		puts (printbuffer);
+
+	if (initialized < CONSOLE_INIT_FULL)
+		return i;
+
+	if (level > loglevel_dmesg)
 		return i;
 
 	while (*s) {
@@ -500,4 +537,63 @@ int printk (const char *fmt, ...)
 	return i;
 }
 EXPORT_SYMBOL(printk);
+
+int printk_level(int level, const char *fmt, ...)
+{
+	va_list args;
+	uint i;
+
+	va_start (args, fmt);
+
+	i = vprintk_level(level, fmt, args);
+	/* For this to work, printbuffer must be larger than
+	 * anything we ever want to print.
+	 */
+	va_end (args);
+
+	return i;
+}
+
+#include <globalvar.h>
+
+static int loglevel_dmesg_set(struct device_d *dev, struct param_d *p, const char *val)
+{
+	loglevel_dmesg = simple_strtoul(val, NULL, 0);
+
+	return 0;
+}
+
+static const char *loglevel_dmesg_get(struct device_d *dev, struct param_d *p)
+{
+	static char buf[2];
+
+	sprintf(buf, "%d", loglevel_dmesg);
+
+	return buf;
+}
+
+static int loglevel_console_set(struct device_d *dev, struct param_d *p, const char *val)
+{
+	loglevel_console = simple_strtoul(val, NULL, 0);
+
+	return 0;
+}
+
+static const char *loglevel_console_get(struct device_d *dev, struct param_d *p)
+{
+	static char buf[2];
+
+	sprintf(buf, "%d", loglevel_console);
+
+	return buf;
+}
+
+static int init_loglevel(void)
+{
+	globalvar_add("loglevel.dmesg", loglevel_dmesg_set, loglevel_dmesg_get, 0);
+	globalvar_add("loglevel.console", loglevel_console_set, loglevel_console_get, 0);
+
+	return 0;
+}
+device_initcall(init_loglevel);
 #endif

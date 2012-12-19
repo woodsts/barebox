@@ -18,14 +18,17 @@
 
 /* debugging and troubleshooting/diagnostic helpers. */
 
-int dev_printf(const struct device_d *dev, const char *format, ...)
+int dev_printf(int level, const struct device_d *dev, const char *format, ...)
+	__attribute__ ((format(__printf__, 3, 4)));
+
+int printk_level(int level, const char *fmt, ...)
 	__attribute__ ((format(__printf__, 2, 3)));
 
 #define __dev_printf(level, dev, format, args...) \
 	({	\
 		int ret = 0; \
 		if (level <= LOGLEVEL) \
-			ret = dev_printf(dev, format, ##args);	\
+			ret = dev_printf(level, dev, format, ##args);	\
 		ret;						\
 	 })
 
@@ -51,7 +54,7 @@ int dev_printf(const struct device_d *dev, const char *format, ...)
 	({	\
 		int ret = 0;	\
 		if (level <= LOGLEVEL) \
-			ret = printk(format, ##args);	\
+			ret = printk_level(level, format, ##args);	\
 		ret;					\
 	 })
 
@@ -64,5 +67,6 @@ int dev_printf(const struct device_d *dev, const char *format, ...)
 #define pr_info(fmt, arg...)	__pr_printk(6, fmt, ##arg)
 #define pr_debug(fmt, arg...)	__pr_printk(7, fmt, ##arg)
 #define debug(fmt, arg...)	__pr_printk(7, fmt, ##arg)
+#define pr_level(level, fmt, arg...)	__pr_printk(level, fmt, ##arg)
 
 #endif

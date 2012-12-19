@@ -364,19 +364,19 @@ const char *dev_id(const struct device_d *dev)
 	return buf;
 }
 
-int dev_printf(const struct device_d *dev, const char *format, ...)
+int dev_printf(int level, const struct device_d *dev, const char *format, ...)
 {
 	va_list args;
 	int ret = 0;
 
 	if (dev->driver && dev->driver->name)
-		ret += pr_info("%s ", dev->driver->name);
+		ret += pr_level(level, "%s ", dev->driver->name);
 
-	ret += pr_info("%s: ", dev_name(dev));
+	ret += pr_level(level, "%s: ", dev_name(dev));
 
 	va_start(args, format);
 
-	ret += vprintk(format, args);
+	ret += vprintk_level(level, format, args);
 
 	va_end(args);
 
