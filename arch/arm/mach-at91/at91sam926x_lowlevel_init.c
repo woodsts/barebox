@@ -49,6 +49,7 @@ static int inline running_in_sram(void)
 void __bare_init at91sam926x_lowlevel_init(void *pio, bool is_pio_asr,
 					   u32 matrix_csa)
 {
+#ifdef CONFIG_HAVE_AT91_LOWLEVEL_INIT
 	u32 r;
 	int i;
 	int in_sram = running_in_sram();
@@ -184,5 +185,6 @@ void __bare_init at91sam926x_lowlevel_init(void *pio, bool is_pio_asr,
 	at91_pmc_write(AT91_PMC_PCER, 0xffffffff);
 
 end:
-	board_init_lowlevel_return();
+#endif
+	barebox_arm_entry(AT91_SDRAM_BASE, at91_get_sdram_size(), 0);
 }
