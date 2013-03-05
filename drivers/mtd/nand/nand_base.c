@@ -1692,7 +1692,7 @@ static const char *mtd_get_bbt_type(struct device_d *dev, struct param_d *p)
 {
 	struct mtd_info *mtd = container_of(dev, struct mtd_info, class_dev);
 	struct nand_chip *chip = mtd->priv;
-	char *str;
+	const char *str;
 
 	if (!chip->bbt)
 		str = "none";
