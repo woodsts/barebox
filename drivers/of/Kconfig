@@ -1,2 +1,6 @@
-config OFDEVICE
+config OFTREE
 	bool
+
+config OFDEVICE
+	select OFTREE
+	bool "Enable probing of devices from the devicetree"
