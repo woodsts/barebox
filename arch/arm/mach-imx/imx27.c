@@ -108,6 +108,9 @@ static int imx27_init(void)
 
 	imx27_init_max();
 
+	if (of_get_root_node())
+		return 0;
+
 	add_generic_device("imx27-ccm", DEVICE_ID_SINGLE, NULL,
 			   MX27_CCM_BASE_ADDR, 0x1000, IORESOURCE_MEM, NULL);
 	add_generic_device("imx1-gpt", 0, NULL, MX27_GPT1_BASE_ADDR, 0x100, IORESOURCE_MEM, NULL);

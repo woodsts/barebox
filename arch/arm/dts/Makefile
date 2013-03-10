@@ -1,3 +1,4 @@
+dtb-$(CONFIG_ARCH_IMX27) += imx27-phytec-phycore.dtb
 
 BUILTIN_DTB := $(patsubst "%",%,$(CONFIG_BUILTIN_DTB)).dtb.o
 ifneq ($(CONFIG_BUILTIN_DTB),"")
