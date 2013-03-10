@@ -258,6 +258,16 @@ zbarebox.S zbarebox.bin zbarebox: barebox.bin
 archclean:
 	$(MAKE) $(clean)=$(pbl)
 
+dts := arch/arm/dts
+
+%.dtb: scripts
+	$(Q)$(MAKE) $(build)=$(dts) $(dts)/$@
+
+dtbs: scripts
+	$(Q)$(MAKE) $(build)=$(dts) dtbs
+
+KBUILD_DTBS := dtbs
+
 KBUILD_IMAGE ?= $(KBUILD_BINARY)
 
 archprepare: maketools
@@ -280,6 +290,10 @@ endif
 
 common-y += $(BOARD) $(MACH)
 common-y += arch/arm/lib/ arch/arm/cpu/
+
+ifneq ($(CONFIG_BUILTIN_DTB),"")
+common-y += arch/arm/dts/
+endif
 
 lds-y	:= arch/arm/lib/barebox.lds
 

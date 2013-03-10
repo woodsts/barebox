@@ -92,6 +92,8 @@ SECTIONS
 	__usymtab : { BAREBOX_SYMS }
 	__usymtab_end = .;
 
+	.dtb : { BAREBOX_DTB() }
+
 	.rel.dyn : {
 		__rel_dyn_start = .;
 		*(.rel*)

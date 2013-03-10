@@ -17,6 +17,10 @@ config HAVE_MACH_ARM_HEAD
 
 menu "System Type"
 
+config BUILTIN_DTB
+	string "DTB to build into the barebox image"
+	depends on OFTREE
+
 choice
 	prompt "ARM system type"
 
