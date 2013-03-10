@@ -85,11 +85,17 @@ static int altera_serial_jtag_probe(struct device_d *dev) {
 
 	struct console_device *cdev;
 	struct altera_serial_jtag_priv *priv;
+	int ret;
 
 	priv = xzalloc(sizeof(*priv));
 	cdev = &priv->cdev;
 
 	priv->regs = dev_request_mem_region(dev, 0);
+	if (!priv->regs) {
+		ret = -EBUSY;
+		goto err_free;
+	}
+
 	cdev->dev = dev;
 	cdev->f_caps = CONSOLE_STDIN | CONSOLE_STDOUT | CONSOLE_STDERR;
 	cdev->tstc = altera_serial_jtag_tstc;
@@ -100,6 +106,11 @@ static int altera_serial_jtag_probe(struct device_d *dev) {
 	console_register(cdev);
 
 	return 0;
+
+err_free:
+	free(priv);
+
+	return ret;
 }
 
 static struct driver_d altera_serial_jtag_driver = {

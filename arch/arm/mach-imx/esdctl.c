@@ -230,7 +230,7 @@ static int imx_esdctl_probe(struct device_d *dev)
 
 	base = dev_request_mem_region(dev, 0);
 	if (!base)
-		return -ENOMEM;
+		return -EBUSY;
 
 	data->add_mem(base, data);
 

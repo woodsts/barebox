@@ -178,10 +178,15 @@ static int s3c_serial_probe(struct device_d *dev)
 {
 	struct s3c_uart *priv;
 	struct console_device *cdev;
+	int ret;
 
 	priv = xzalloc(sizeof(struct s3c_uart));
 	cdev = &priv->cdev;
 	priv->regs = dev_request_mem_region(dev, 0);
+	if (!priv->regs) {
+		ret = -EBUSY;
+		goto err_free;
+	}
 	dev->priv = priv;
 	cdev->dev = dev;
 	cdev->f_caps = CONSOLE_STDIN | CONSOLE_STDOUT | CONSOLE_STDERR;
@@ -197,6 +202,11 @@ static int s3c_serial_probe(struct device_d *dev)
 	console_register(cdev);
 
 	return 0;
+
+err_free:
+	free(priv);
+
+	return ret;
 }
 
 static void s3c_serial_remove(struct device_d *dev)

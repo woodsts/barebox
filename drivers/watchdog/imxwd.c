@@ -158,6 +158,11 @@ static int imx_wd_probe(struct device_d *dev)
 
 	priv = xzalloc(sizeof(struct imx_wd));
 	priv->base = dev_request_mem_region(dev, 0);
+	if (!priv->base) {
+		ret = -EBUSY;
+		goto on_error;
+	}
+
 	priv->set_timeout = fn;
 	priv->wd.set_timeout = imx_watchdog_set_timeout;
 	priv->dev = dev;

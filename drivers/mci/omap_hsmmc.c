@@ -596,6 +596,11 @@ static int omap_mmc_probe(struct device_d *dev)
 	hsmmc->mci.hw_dev = dev;
 
 	hsmmc->iobase = dev_request_mem_region(dev, 0);
+	if (!hsmmc->iobase) {
+		ret = -EBUSY;
+		goto err_free;
+	}
+
 	hsmmc->base = hsmmc->iobase + reg_ofs;
 
 	hsmmc->mci.voltages = MMC_VDD_32_33 | MMC_VDD_33_34;
@@ -611,6 +616,11 @@ static int omap_mmc_probe(struct device_d *dev)
 	mci_register(&hsmmc->mci);
 
 	return 0;
+
+err_free:
+	free(hsmmc);
+
+	return ret;
 }
 
 static struct platform_device_id omap_mmc_ids[] = {

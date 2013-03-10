@@ -22,6 +22,7 @@
 
 #include <common.h>
 #include <errno.h>
+#include <malloc.h>
 #include <io.h>
 #include <gpio.h>
 #include <init.h>
@@ -131,6 +132,11 @@ static int imx_gpio_probe(struct device_d *dev)
 
 	imxgpio = xzalloc(sizeof(*imxgpio));
 	imxgpio->base = dev_request_mem_region(dev, 0);
+	if (!imxgpio->base) {
+		ret = -EBUSY;
+		goto err_free;
+	}
+
 	imxgpio->chip.ops = &imx_gpio_ops;
 	if (dev->id < 0) {
 		imxgpio->chip.base = of_alias_get_id(dev->device_node, "gpio");
@@ -148,6 +154,10 @@ static int imx_gpio_probe(struct device_d *dev)
 	dev_dbg(dev, "probed gpiochip%d with base %d\n", dev->id, imxgpio->chip.base);
 
 	return 0;
+err_free:
+	free(imxgpio);
+
+	return ret;
 }
 
 static __maybe_unused struct of_device_id imx_gpio_dt_ids[] = {

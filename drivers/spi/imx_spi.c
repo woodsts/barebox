@@ -568,6 +568,10 @@ static int imx_spi_probe(struct device_d *dev)
 	imx->xchg_single = spi_imx_devtype_data[version].xchg_single;
 	imx->init = spi_imx_devtype_data[version].init;
 	imx->regs = dev_request_mem_region(dev, 0);
+	if (!imx->regs) {
+		ret = -EBUSY;
+		goto err_free;
+	}
 
 	imx->init(imx);
 

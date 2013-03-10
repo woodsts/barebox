@@ -666,6 +666,10 @@ static int fec_probe(struct device_d *dev)
 	}
 
 	fec->regs = dev_request_mem_region(dev, 0);
+	if (!fec->regs) {
+		ret = -EBUSY;
+		goto err_free;
+	}
 
 	/* Reset chip. */
 	writel(FEC_ECNTRL_RESET, fec->regs + FEC_ECNTRL);

@@ -259,6 +259,8 @@ static int imx_iim_probe(struct device_d *dev)
 	void __iomem *base;
 
 	base = dev_request_mem_region(dev, 0);
+	if (!base)
+		return -EBUSY;
 
 	if (pdata)
 		mac_addr_base = pdata->mac_addr_base;

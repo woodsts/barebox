@@ -954,6 +954,7 @@ static void cfi_init_mtd(struct flash_info *info)
 static int cfi_probe (struct device_d *dev)
 {
 	struct flash_info *info = xzalloc(sizeof(*info));
+	int ret;
 
 	dev->priv = (void *)info;
 
@@ -961,6 +962,11 @@ static int cfi_probe (struct device_d *dev)
 	info->flash_id = FLASH_UNKNOWN;
 	info->cmd_reset = FLASH_CMD_RESET;
 	info->base = dev_request_mem_region(dev, 0);
+	if (!info->base) {
+		ret = -EBUSY;
+		goto err_free;
+	}
+
 	info->size = flash_get_size(info);
 
 	if (info->flash_id == FLASH_UNKNOWN) {
@@ -975,6 +981,12 @@ static int cfi_probe (struct device_d *dev)
 	cfi_init_mtd(info);
 
 	return 0;
+
+err_free:
+
+	free(info);
+
+	return ret;
 }
 
 static __maybe_unused struct of_device_id cfi_dt_ids[] = {

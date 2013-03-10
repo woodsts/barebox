@@ -569,6 +569,7 @@ static int mxs_mci_probe(struct device_d *hw_dev)
 	struct mxs_mci_platform_data *pd = hw_dev->platform_data;
 	struct mxs_mci_host *mxs_mci;
 	struct mci_host *host;
+	int ret;
 
 	if (hw_dev->platform_data == NULL) {
 		pr_err("Missing platform data\n");
@@ -584,6 +585,10 @@ static int mxs_mci_probe(struct device_d *hw_dev)
 	host->set_ios = mxs_mci_set_ios;
 	host->init = mxs_mci_initialize;
 	mxs_mci->regs = dev_request_mem_region(hw_dev, 0);
+	if (!mxs_mci->regs) {
+		ret = -EBUSY;
+		goto err_free;
+	}
 
 	/* feed forward the platform specific values */
 	host->voltages = pd->voltages;
@@ -635,6 +640,11 @@ static int mxs_mci_probe(struct device_d *hw_dev)
 #endif
 
 	return mci_register(host);
+
+err_free:
+	free(mxs_mci);
+
+	return ret;
 }
 
 static struct driver_d mxs_mci_driver = {

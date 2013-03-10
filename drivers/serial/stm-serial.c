@@ -144,6 +144,7 @@ static int stm_serial_probe(struct device_d *dev)
 {
 	struct stm_priv *priv;
 	struct console_device *cdev;
+	int ret;
 
 	priv = xzalloc(sizeof *priv);
 
@@ -159,6 +160,10 @@ static int stm_serial_probe(struct device_d *dev)
 
 	dev->priv = priv;
 	priv->base = dev_request_mem_region(dev, 0);
+	if (!priv->base) {
+		ret = -EBUSY;
+		goto err_free;
+	}
 
 	stm_serial_init_port(priv);
 	stm_serial_setbaudrate(cdev, CONFIG_BAUDRATE);
@@ -171,6 +176,11 @@ static int stm_serial_probe(struct device_d *dev)
 	clock_register_client(&priv->notify);
 
 	return 0;
+
+err_free:
+	free(priv);
+
+	return ret;
 }
 
 static void stm_serial_remove(struct device_d *dev)

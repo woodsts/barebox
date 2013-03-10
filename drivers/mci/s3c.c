@@ -726,6 +726,7 @@ static int s3c_mci_probe(struct device_d *hw_dev)
 {
 	struct s3c_mci_host *s3c_host;
 	struct s3c_mci_platform_data *pd = hw_dev->platform_data;
+	int ret;
 
 	s3c_host = xzalloc(sizeof(*s3c_host));
 	s3c_host->host.send_cmd = mci_request;
@@ -743,6 +744,11 @@ static int s3c_mci_probe(struct device_d *hw_dev)
 
 	hw_dev->priv = s3c_host;
 	s3c_host->base = dev_request_mem_region(hw_dev, 0);
+	if (!s3c_host->base) {
+		ret = -EBUSY;
+		goto err_free;
+	}
+
 	s3c_host->host.hw_dev = hw_dev;
 
 	/* feed forward the platform specific values */
@@ -758,6 +764,10 @@ static int s3c_mci_probe(struct device_d *hw_dev)
 	writel(SDICON_FIFORESET | SDICON_MMCCLOCK, s3c_host->base + SDICON);
 
 	return mci_register(&s3c_host->host);
+
+err_free:
+	free(s3c_host);
+	return err;
 }
 
 static struct driver_d s3c_mci_driver = {

@@ -329,6 +329,11 @@ static int imx_serial_probe(struct device_d *dev)
 	}
 
 	priv->regs = dev_request_mem_region(dev, 0);
+	if (!priv->regs) {
+		ret = -EBUSY;
+		goto err_free;
+	}
+
 	cdev->dev = dev;
 	cdev->f_caps = CONSOLE_STDIN | CONSOLE_STDOUT | CONSOLE_STDERR;
 	cdev->tstc = imx_serial_tstc;

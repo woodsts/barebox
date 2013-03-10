@@ -73,6 +73,8 @@ EXPORT_SYMBOL(mxc_iomux_v3_setup_multiple_pads);
 static int imx_iomux_probe(struct device_d *dev)
 {
 	base = dev_request_mem_region(dev, 0);
+	if (!base)
+		return -EBUSY;
 
 	return 0;
 }

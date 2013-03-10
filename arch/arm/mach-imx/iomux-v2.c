@@ -118,6 +118,8 @@ int imx_iomux_setup_multiple_pins(const unsigned int *pin_list, unsigned count)
 static int imx_iomux_probe(struct device_d *dev)
 {
 	base = dev_request_mem_region(dev, 0);
+	if (!base)
+		return -EBUSY;
 
 	return 0;
 }
