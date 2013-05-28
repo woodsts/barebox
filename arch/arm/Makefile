@@ -254,7 +254,7 @@ KBUILD_IMAGE := barebox.zynq
 endif
 
 pbl := arch/arm/pbl
-$(pbl)/zbarebox.S $(pbl)/zbarebox.bin $(pbl)/zbarebox: barebox.bin
+$(pbl)/zbarebox.S $(pbl)/zbarebox.bin $(pbl)/zbarebox: barebox.bin FORCE
 	$(Q)$(MAKE) $(build)=$(pbl) $@
 
 archclean:
