@@ -74,20 +74,6 @@ static inline void dove_memory_find(unsigned long *phys_base,
 	}
 }
 
-static struct NS16550_plat uart_plat = {
-	.shift = 2,
-};
-
-static int dove_add_uart(void)
-{
-	uart_plat.clock = clk_get_rate(tclk);
-	if (!add_ns16550_device(DEVICE_ID_DYNAMIC,
-				(unsigned int)CONSOLE_UART_BASE, 32,
-				IORESOURCE_MEM_32BIT, &uart_plat))
-		return -ENODEV;
-	return 0;
-}
-
 /*
  * Dove TCLK sample-at-reset configuation
  *
@@ -126,12 +112,12 @@ static int dove_init_soc(void)
 	clkdev_add_physbase(tclk, (unsigned int)DOVE_TIMER_BASE, NULL);
 	clkdev_add_physbase(tclk, (unsigned int)DOVE_SPI0_BASE, NULL);
 	clkdev_add_physbase(tclk, (unsigned int)DOVE_SPI1_BASE, NULL);
+	clkdev_add_physbase(tclk, (unsigned int)CONSOLE_UART_BASE, NULL);
 	add_generic_device("orion-timer", DEVICE_ID_SINGLE, NULL,
 			   (unsigned int)DOVE_TIMER_BASE, 0x30,
 			   IORESOURCE_MEM, NULL);
 	dove_memory_find(&phys_base, &phys_size);
 	arm_add_mem_device("ram0", phys_base, phys_size);
-	dove_add_uart();
 
 	return 0;
 }
