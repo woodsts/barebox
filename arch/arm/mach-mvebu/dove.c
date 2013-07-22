@@ -113,9 +113,6 @@ static int dove_init_soc(void)
 	clkdev_add_physbase(tclk, (unsigned int)DOVE_SPI0_BASE, NULL);
 	clkdev_add_physbase(tclk, (unsigned int)DOVE_SPI1_BASE, NULL);
 	clkdev_add_physbase(tclk, (unsigned int)CONSOLE_UART_BASE, NULL);
-	add_generic_device("orion-timer", DEVICE_ID_SINGLE, NULL,
-			   (unsigned int)DOVE_TIMER_BASE, 0x30,
-			   IORESOURCE_MEM, NULL);
 	dove_memory_find(&phys_base, &phys_size);
 	arm_add_mem_device("ram0", phys_base, phys_size);
 
