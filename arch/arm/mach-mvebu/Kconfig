@@ -53,6 +53,7 @@ choice
 
 config MACH_GLOBALSCALE_MIRABOX
 	bool "Globalscale Mirabox"
+	select HAVE_PBL_MULTI_IMAGES
 
 endchoice
 

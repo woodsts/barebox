@@ -24,3 +24,17 @@ image-$(CONFIG_MACH_SOLIDRUN_CUBOX) += barebox-solidrun-cubox-uart.img
 
 FILE_barebox-solidrun-cubox-2nd.img = start_solidrun_cubox.pblx
 image-$(CONFIG_MACH_SOLIDRUN_CUBOX) += barebox-solidrun-cubox-2nd.img
+
+# ----------------------- Armada 370 based boards ---------------------------
+GLOBALSCALE_MIRABOX_KWBOPTS = -c -i $(board)/globalscale-mirabox/kwbimage.cfg -d 0x1000000 -e 0x1000000
+pblx-$(CONFIG_MACH_GLOBALSCALE_MIRABOX) += start_globalscale_mirabox
+OPTS_start_globalscale_mirabox.pblx.kwbimg = $(GLOBALSCALE_MIRABOX_KWBOPTS)
+FILE_barebox-globalscale-mirabox.img = start_globalscale_mirabox.pblx.kwbimg
+image-$(CONFIG_MACH_GLOBALSCALE_MIRABOX) += barebox-globalscale-mirabox.img
+
+OPTS_start_globalscale_mirabox.pblx.kwbuartimg = -m uart $(GLOBALSCALE_MIRABOX_KWBOPTS)
+FILE_barebox-globalscale-mirabox-uart.img = start_globalscale_mirabox.pblx.kwbuartimg
+image-$(CONFIG_MACH_GLOBALSCALE_MIRABOX) += barebox-globalscale-mirabox-uart.img
+
+FILE_barebox-globalscale-mirabox-2nd.img = start_globalscale_mirabox.pblx
+image-$(CONFIG_MACH_GLOBALSCALE_MIRABOX) += barebox-globalscale-mirabox-2nd.img
