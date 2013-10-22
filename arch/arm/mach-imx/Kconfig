@@ -39,6 +39,7 @@ config ARCH_TEXT_BASE
 	default 0x4fc00000 if MACH_PHYTEC_PFLA02
 	default 0x4fc00000 if MACH_DFI_FS700_M60
 	default 0x4fc00000 if MACH_UDOO
+	default 0x17800000 if MACH_ARKONA_AT1006
 
 config ARCH_IMX_INTERNAL_BOOT
 	bool "support internal boot mode"
@@ -224,6 +225,15 @@ config MACH_GK802
 config MACH_TQMA6X
 	bool "TQ tqma6x on mba6x"
 	select ARCH_IMX6
+
+config MACH_ARKONA_AT1006
+        bool "Arkona i.MX6 AT1008/AT1006"
+	select ARCH_IMX6
+	select HAVE_PBL_MULTI_IMAGES
+	select HAVE_DEFAULT_ENVIRONMENT_NEW
+	  help
+	  Bootloader for the Arkona AT1008 CPU modules on the
+	  Arkona AT1006 baseboard
 
 config MACH_SABRELITE
 	bool "Freescale i.MX6 Sabre Lite"

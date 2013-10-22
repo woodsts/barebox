@@ -1,0 +1,233 @@
+/*
+ * Copyright (C) 2013 Pengutronix <kernel@pengutronix.de>
+ *
+ * This file describes the i.MX6D CPU module
+ */
+
+#include "imx6q.dtsi"
+
+/*
+ * Arkona AT1008: CPU Module
+ * - i.MX6D SoC
+ * - PMIC
+ *   - LTC3676-1
+ * - DDR3 SDRAM
+ *   - four devices of type MT41J128M16HA
+ *   - 16 M x 16 bit x 8 banks = 256 MiB per device
+ *   - 1GiB full memory
+ *   - speed grade 528MHz
+ * - µSD card slot
+ *   - no card detect signal
+ *   - no write protect signal
+ * - MRAM via SPI
+ *   - EverSpin MR25H10
+ *   - 128 kiB
+ *   - CS: GPIO5[25]
+ * - NOR flash
+ *   - Micron M25P32-VMW6G (boot source)
+ *   - 32 MBit, 4 MiB
+ *   - CPOL=CPHA=0
+ *   - 64 sectors, 512 kiB per sector, 256 bytes per page
+ *   - 75 MHz clock, but not for READ (limited 33 MHz instead)
+ *     Note: there is no such speed limit if the driver uses the READFAST feature
+ *   - CS: GPIO1[17]
+ */
+
+/ {
+	chosen {
+		linux,stdout-path = &uart1;
+
+		environment-spi {
+			compatible = "barebox,environment";
+			device-path = &flash, "partname:barebox-environment";
+			status = "disabled";
+		};
+	};
+
+	memory {
+		reg = <0x10000000 0x40000000>;
+	};
+
+	aliases {
+		/* there's only one SD card slot. Let it always be the first one */
+		mmc0 = &usdhc3;
+		/* use these aliases at run-time to be independent from initializing order */
+		spiflash = &flash;
+		mram = &mram;
+		/* make the 'state' tool happy */
+		state = &state;
+	};
+
+	state: state@0 {
+		magic = <0x4d433230>;
+		compatible = "barebox,state";
+		backend-type = "raw";
+		backend = &mram, "partname:state";
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		active_partition@1 {
+			reg = <0 4>;
+			type = "enum32";
+			names = "none", "user1", "user2", "factory";
+			default = <0>;
+		};
+
+		boot_trial@2 {
+			reg = <4 4>;
+			type = "uint32";
+			default = <0x0>;
+		};
+
+		user1_partition@3 {
+			/* content description of 'user1' partition */
+			reg = <8 4>;
+			type = "enum32";
+			names = "invalid", "valid";
+			default = <0>;
+		};
+
+		user2_partition@4 {
+			/* content description of 'user1' partition */
+			reg = <12 4>;
+			type = "enum32";
+			names = "invalid", "valid";
+			default = <0>;
+		};
+	};
+};
+
+&uart1 {
+	pinctrl-names = "default";
+	pinctrl-0 = <&pinctrl_uart1_1>;
+	status = "okay";
+};
+
+&ecspi1 {
+	fsl,spi-num-chipselects = <1>;
+	cs-gpios = <&gpio5 25 0>; /* MX6QDL_PAD_CSI0_DAT7__GPIO5_IO25 */
+	pinctrl-names = "default";
+	pinctrl-0 = <&pinctrl_ecspi1_3>;
+	status = "okay";
+
+	mram: mr25h10@0 {
+		compatible = "mr25h10";
+		spi-max-frequency = <20000000>;
+		reg = <0>;
+
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		/* full size of this SPI MRAM '25Q10' memory is 128 kiB */
+		partition@0 {
+			label = "general";
+			reg = <0x00000 0x1fe00>; /* free for general purpose */
+		};
+
+		/*
+		 * the 'state' comes with 16 bytes overhead
+		 * and 16 bytes (4 words) of payload. We need to
+		 * reserve the space for at least two copies here
+		 */
+		partition@1 {
+			label = "state";
+			reg = <0x1fe00 0x0200>; /* reserved for 'state' purpose */
+		};
+	};
+};
+
+&ecspi5 {
+	fsl,spi-num-chipselects = <1>;
+	cs-gpios = <&gpio1 17 0>; /* MX6QDL_PAD_SD1_DAT1__GPIO1_IO17 */
+	pinctrl-names = "default";
+	pinctrl-0 = <&pinctrl_ecspi5_1>;
+	status = "okay";
+
+	flash: m25p32@0 {
+		compatible = "m25p32", "m25p80";
+		spi-max-frequency = <33000000>;
+		reg = <0>;
+
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		partition@0 {
+			label = "barebox";
+			reg = <0x0 0x80000>;
+		};
+
+		partition@1 {
+			label = "barebox-environment";
+			reg = <0x80000 0x20000>;
+		};
+	};
+};
+
+&iomuxc {
+	/* this one connects the MRAM */
+	ecspi1 {
+		pinctrl_ecspi1_3: ecspi1grp-3 {
+			fsl,pins = <
+				MX6QDL_PAD_CSI0_DAT6__ECSPI1_MISO 0x00010040
+				MX6QDL_PAD_CSI0_DAT5__ECSPI1_MOSI 0x00010049
+				MX6QDL_PAD_CSI0_DAT4__ECSPI1_SCLK 0x00010091 /* 40 MHz */
+				MX6QDL_PAD_CSI0_DAT7__GPIO5_IO25 0x00010049
+			>;
+		};
+	};
+
+	/* this one connects the FPGA on the baseboard */
+	ecspi3 {
+		pinctrl_ecspi3_1: ecspi3grp-1 {
+			fsl,pins = <
+				MX6QDL_ECSPI3_PINGRP1
+			>;
+		};
+	};
+
+	/* this one connects the NOR */
+	ecspi5 {
+		pinctrl_ecspi5_1: ecspi5grp-1 {
+			fsl,pins = <
+				MX6QDL_PAD_SD1_DAT0__ECSPI5_MISO 0x00010040
+				MX6QDL_PAD_SD1_CMD__ECSPI5_MOSI 0x00010049
+				MX6QDL_PAD_SD1_CLK__ECSPI5_SCLK 0x00010091 /* 75 MHz */
+				MX6QDL_PAD_SD1_DAT1__GPIO1_IO17 0x00010049
+			>;
+		};
+	};
+
+	/* generic debugging UART */
+	uart1 {
+		pinctrl_uart1_1: uart1grp-1 {
+			fsl,pins = <
+				MX6QDL_UART1_PINGRP1
+			>;
+		};
+	};
+
+	fec {
+		pinctrl_enet_1: fecgrp-1 {
+			fsl,pins = <
+				MX6QDL_ENET_PINGRP1
+			>;
+		};
+	};
+
+	usdhc3 {
+		pinctrl_usdhc3_2: usdhc3grp-2 {
+			fsl,pins = <
+				MX6QDL_USDHC3_PINGRP_D4
+			>;
+		};
+	};
+};
+
+/* the onboard micro SD card */
+&usdhc3 {
+	pinctrl-names = "default";
+	pinctrl-0 = <&pinctrl_usdhc3_2>;
+	status = "okay";
+	non-removable; /* no CD available */
+	bus-width = <4>;
+};

@@ -1,0 +1,4 @@
+#!/bin/sh
+
+# a more useful prompt
+export PS1="$global.hostname:\w "

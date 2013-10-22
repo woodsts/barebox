@@ -1,0 +1,4 @@
+#!/bin/sh
+
+echo "#### Welcome to $global.model"
+echo "#### AT1008 CPU module at slot $global.module.slot"

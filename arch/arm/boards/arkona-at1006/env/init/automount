@@ -1,0 +1,9 @@
+#!/bin/sh
+
+# automount FAT on SD card
+mkdir -p /mnt/fat
+automount -d /mnt/fat 'mmc2.probe=1 && [ -e /dev/mmc2.0 ] && mount /dev/mmc2.0 /mnt/fat'
+
+# automount tftp server based on $eth0.serverip
+mkdir -p /mnt/tftp
+automount /mnt/tftp 'usb && ifup eth0 && mount -t tftp $eth0.serverip /mnt/tftp'

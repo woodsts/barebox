@@ -1,0 +1,20 @@
+/*
+ * Copyright (C) 2013 Pengutronix <kernel@pengutronix.de>
+ *
+ * This file describes the Link4/AT1006 baseboard
+ */
+
+/dts-v1/;
+
+#include "arkona-at1008.dtsi"
+
+/ {
+	model = "Arkona Technologies GmbH Link4";
+	compatible = "arkona,link4", "fsl,imx6q";
+};
+
+&usbh1 {
+	phy_type = "utmi";
+	dr_mode = "host";
+	status = "okay";
+};
