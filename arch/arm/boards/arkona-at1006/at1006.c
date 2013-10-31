@@ -109,6 +109,8 @@ static void at1006_enable_spi(void)
 	gpio_direction_output(AT1006_SPI_MRAM_SELECT, 1);
 }
 
+extern void at1006_enable_clock_gpios(void);
+
 static int at1006_core_init(void)
 {
 	if (!of_machine_is_compatible("arkona,link4"))
@@ -119,6 +121,7 @@ static int at1006_core_init(void)
 	at1006_detect_cpu_slot();
 	at1006_enable_usbh1();
 	at1006_enable_spi();
+	at1006_enable_clock_gpios();
 
 	of_device_enable_path("/chosen/environment-spi");
 

@@ -3,3 +3,4 @@ obj-y += flash-header-at1008.dcd.o
 extra-y += flash-header-at1008.dcd.S
 extra-y += flash-header-at1008.dcd
 lwl-y += lowlevel.o
+obj-y += command_lmk03806.o
