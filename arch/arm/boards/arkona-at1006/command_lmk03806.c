@@ -74,10 +74,10 @@ static const struct gpio_set at1006_clock_devs[2] = {
 static void lmk03806_transmitt_bit(bool data_bit, const struct gpio_set *gpio)
 {
 	gpio_set_value(gpio->data, data_bit);
-        gpio_set_value(gpio->clk, 0); /* change data */
 	/* data setup time of tDCS=25 ns required */
         gpio_set_value(gpio->clk, 1); /* latch data */
 	/* data hold time of tCDH=8 ns required */
+        gpio_set_value(gpio->clk, 0);
 }
 
 /* transmitt a word, MSB first */
