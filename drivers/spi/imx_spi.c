@@ -513,6 +513,8 @@ static __maybe_unused struct spi_imx_devtype_data spi_imx_devtype_data_2_3 = {
 	.init = cspi_2_3_init,
 };
 
+static int fake_cs = -1; /* no GPIO in use */
+
 static int imx_spi_dt_probe(struct imx_spi *imx)
 {
 	struct device_node *node = imx->master.dev->device_node;
@@ -523,8 +525,11 @@ static int imx_spi_dt_probe(struct imx_spi *imx)
 		return -ENODEV;
 
 	ret = of_property_read_u32(node, "fsl,spi-num-chipselects", &num_cs);
-	if (ret)
-		return ret;
+	if (ret) {
+		imx->master.num_chipselect = 1;
+		imx->cs_array = &fake_cs;
+		return 0;
+	}
 
 	imx->master.num_chipselect = num_cs;
 	imx->cs_array = xzalloc(sizeof(u32) * num_cs);
