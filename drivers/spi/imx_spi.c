@@ -389,9 +389,46 @@ static void cspi_2_3_init(struct imx_spi *imx)
 {
 }
 
+static u8 rev_u8_on_demand(unsigned mode, u32 val)
+{
+	u32 rval;
+
+	if (mode & SPI_LSB_FIRST)
+		asm("rbit %0, %1" : "=r"(rval) : "r"(val));
+	else
+		rval = val;
+
+	return (u8)rval;
+}
+
+static u16 rev_u16_on_demand(unsigned mode, u32 val)
+{
+	u32 rval;
+
+	if (mode & SPI_LSB_FIRST)
+		asm("rbit %0, %1" : "=r"(rval) : "r"(val));
+	else
+		rval = val;
+
+	return (u16)rval;
+}
+
+static u32 rev_u32_on_demand(unsigned mode, u32 val)
+{
+	u32 rval;
+
+	if (mode & SPI_LSB_FIRST)
+		asm("rbit %0, %1" : "=r"(rval) : "r"(val));
+	else
+		rval = val;
+
+	return rval;
+}
+
 static void imx_spi_do_transfer(struct spi_device *spi, struct spi_transfer *t)
 {
 	struct imx_spi *imx = container_of(spi->master, struct imx_spi, master);
+	unsigned int tx_val;
 	unsigned i;
 
 	if (spi->bits_per_word <= 8) {
@@ -400,7 +437,11 @@ static void imx_spi_do_transfer(struct spi_device *spi, struct spi_transfer *t)
 		u8		rx_val;
 
 		for (i = 0; i < t->len; i++) {
-			rx_val = imx->xchg_single(imx, tx_buf ? tx_buf[i] : 0);
+			if (tx_buf)
+				tx_val = rev_u8_on_demand(spi->mode, tx_buf[i]);
+			else
+				tx_val = 0;
+			rx_val = imx->xchg_single(imx, tx_val);
 			if (rx_buf)
 				rx_buf[i] = rx_val;
 		}
@@ -410,7 +451,11 @@ static void imx_spi_do_transfer(struct spi_device *spi, struct spi_transfer *t)
 		u16		rx_val;
 
 		for (i = 0; i < t->len >> 1; i++) {
-			rx_val = imx->xchg_single(imx, tx_buf ? tx_buf[i] : 0);
+			if (tx_buf)
+				tx_val = rev_u16_on_demand(spi->mode, tx_buf[i]);
+			else
+				tx_val = 0;
+			rx_val = imx->xchg_single(imx, tx_val);
 			if (rx_buf)
 				rx_buf[i] = rx_val;
 		}
@@ -420,7 +465,11 @@ static void imx_spi_do_transfer(struct spi_device *spi, struct spi_transfer *t)
 		u32		rx_val;
 
 		for (i = 0; i < t->len >> 2; i++) {
-			rx_val = imx->xchg_single(imx, tx_buf ? tx_buf[i] : 0);
+			if (tx_buf)
+				tx_val = rev_u32_on_demand(spi->mode, tx_buf[i]);
+			else
+				tx_val = 0;
+			rx_val = imx->xchg_single(imx, tx_val);
 			if (rx_buf)
 				rx_buf[i] = rx_val;
 		}
