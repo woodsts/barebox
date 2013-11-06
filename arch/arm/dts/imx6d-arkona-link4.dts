@@ -34,7 +34,28 @@
 				MX6QDL_PAD_SD3_DAT6__GPIO6_IO18 0x00010040 /* FTEST1 */
 				MX6QDL_PAD_SD3_DAT7__GPIO6_IO17 0x00010040 /* FTEST2 */
 				MX6QDL_PAD_SD2_CMD__GPIO1_IO11 0x00000070 /* DATA */
+				/* control pins to the FPGA */
+				MX6QDL_PAD_DI0_PIN2__GPIO4_IO18 0x0010040 /* FPGA status */
+				MX6QDL_PAD_DI0_PIN3__GPIO4_IO19 0x0010040 /* FPGA config done */
+				MX6QDL_PAD_DI0_PIN4__GPIO4_IO20 0x00000B0 /* FPGA config */
 			>;
 		};
+	};
+};
+
+&ecspi3 {
+	pinctrl-names = "default";
+	pinctrl-0 = <&pinctrl_ecspi3_1>;
+	fsl,spi-num-chipselects = <1>; /* but no GPIO for this purpose */
+	status = "okay";
+
+	fpga: arria@0 {
+		compatible = "altr,passive-serial";
+		nstatus-gpios = <&gpio4 18 0>;
+		config-done-gpios = <&gpio4 19 0>;
+		nconfig-gpios = <&gpio4 20 0>;
+		/* transfer data as fast as possible */
+		spi-max-frequency = <60000000>;
+		reg = <0>;
 	};
 };
