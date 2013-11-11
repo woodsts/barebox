@@ -1,0 +1,45 @@
+barebox,state
+=============
+
+A state node contains a description of a set of variables along with
+a place where the variables are stored.
+
+Required properties:
+- compatible: should be "barebox,state";
+- magic: A 32bit number used as a magic to identify the state
+
+Optional properties:
+- backend: describes where the data for this state is stored
+- backend-type: should be "raw" or "dtb".
+
+Variable nodes
+==============
+
+These are subnodes of a state node each describing a single variable.
+
+Required properties:
+- type: Should be "uint32", "enum32" or "mac" for the type of the variable
+- names: For enum32 values only, this specifies the values possible for enum32.
+
+Optional properties:
+- default: The default value if the variable cannot be read from storage. For
+           enum32 values it is an integer representing an offset into the names
+	   array.
+
+state: state@0 {
+	magic = <0x27031977>;
+	compatible = "barebox,state";
+	backend-type = "raw";
+	backend = &eeprom, "partname:state";
+
+	bootcount@0 {
+		type = "u32";
+		default = <0x0>;
+	};
+
+	bootsource@1 {
+		type = "enum32";
+		names = "mmc", "nand";
+		default ="mmc";
+	};
+};

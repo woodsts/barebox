@@ -776,6 +776,13 @@ config CMD_WD_DEFAULT_TIMOUT
 	  enabled and re-triggered with the default timeout value).
 endif
 
+config CMD_STATE
+	tristate
+	depends on STATE
+	prompt "state"
+	help
+	  Adds support for a stateful boot support.
+
 endmenu
 
 endif

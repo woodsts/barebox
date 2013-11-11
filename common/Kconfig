@@ -657,6 +657,11 @@ config BAREBOXCRC32_TARGET
 config POLLER
 	bool "generic polling infrastructure"
 
+config STATE
+	bool "generic state infrastructure"
+	select ENVIRONMENT_VARIABLES
+	select PARAMETER
+
 config RESET_SOURCE
 	bool "detect Reset cause"
 	depends on GLOBALVAR
