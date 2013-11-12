@@ -47,6 +47,11 @@
 			};
 		};
 
+		fpgamgr@ff706000 {
+			compatible = "altr,fpga-mgr";
+			reg = <0xff706000 0x1000 0xffb90000 0x1000>;
+		};
+
 		timer@ffc08000 {
 			clock-frequency = <100000000>;
 		};
