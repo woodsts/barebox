@@ -611,6 +611,14 @@ config CMD_BAREBOX_UPDATE
 	select BAREBOX_UPDATE
 	prompt "barebox-update"
 
+config CMD_FIRMWARELOAD
+	bool
+	select FIRMWARE
+	prompt "firmwareload"
+	help
+	  Provides the "firmwareload" command which deals with devices which need
+	  firmware to work. It is also used to upload firmware to FPGA devices.
+
 config CMD_TIMEOUT
 	tristate
 	prompt "timeout"
