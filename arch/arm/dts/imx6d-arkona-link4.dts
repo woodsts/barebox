@@ -59,3 +59,11 @@
 		reg = <0>;
 	};
 };
+
+&fec {
+	/* interrupt GPIO1/28 */
+	pinctrl-names = "default";
+	pinctrl-0 = <&pinctrl_enet_1>; /* pin group is correct. MX6QDL_PAD_GPIO_16__ENET_REF_CLK is not used! R17 is not populated */
+	phy-mode = "rgmii";
+	status = "okay";
+};
