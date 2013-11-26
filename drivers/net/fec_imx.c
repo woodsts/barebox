@@ -129,6 +129,15 @@ static int fec_miibus_write(struct mii_bus *bus, int phyAddr,
 	return 0;
 }
 
+static int fec_miibus_reset(struct mii_bus *bus)
+{
+	fec_miibus_write(bus, 0x00, MII_BMCR, BMCR_RESET);
+	mdelay(100);
+	fec_miibus_write(bus, 0x00, MII_BMCR, 0);
+
+	return 0;
+}
+
 static int fec_rx_task_enable(struct fec_priv *fec)
 {
 	writel(1 << 24, fec->regs + FEC_R_DES_ACTIVE);
@@ -728,6 +737,7 @@ static int fec_probe(struct device_d *dev)
 
 	fec->miibus.read = fec_miibus_read;
 	fec->miibus.write = fec_miibus_write;
+	fec->miibus.reset = fec_miibus_reset;
 
 	fec->miibus.priv = fec;
 	fec->miibus.parent = dev;
