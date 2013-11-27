@@ -646,19 +646,20 @@ static int fec_probe_dt(struct device_d *dev, struct fec_priv *fec)
 	return -ENODEV;
 }
 #endif
-static int fec_probe(struct device_d *dev)
+static int fec_really_probe(struct device_d *dev)
 {
-        struct fec_platform_data *pdata = (struct fec_platform_data *)dev->platform_data;
-        struct eth_device *edev;
+	struct fec_platform_data *pdata = (struct fec_platform_data *)dev->platform_data;
+	struct eth_device *edev;
 	struct fec_priv *fec;
 	void *base;
 	int ret;
 	enum fec_type type;
 	int phy_reset;
 
-	ret = dev_get_drvdata(dev, (unsigned long *)&type);
-	if (ret)
-		return ret;
+	if (dev->priv != NULL)
+		return 0; /* already initialized */
+
+	dev_get_drvdata(dev, (unsigned long *)&type);
 
 	fec = xzalloc(sizeof(*fec));
 	fec->type = type;
@@ -752,9 +753,29 @@ err_free:
 	return ret;
 }
 
+static int fec_probe(struct device_d *dev)
+{
+	enum fec_type type;
+	int ret;
+
+	ret = dev_get_drvdata(dev, (unsigned long *)&type);
+	if (ret)
+		return ret;
+
+	if (IS_ENABLED(CONFIG_ETHER_STARTUP))
+		ret = fec_really_probe(dev);
+	else
+		dev->detect = fec_really_probe;
+
+	return ret;
+}
+
 static void fec_remove(struct device_d *dev)
 {
 	struct fec_priv *fec = dev->priv;
+
+	if (fec == NULL)
+		return; /* not yet initialized, skip this step */
 
 	fec_halt(&fec->edev);
 }
