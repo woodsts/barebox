@@ -7,3 +7,7 @@ automount -d /mnt/fat 'mmc2.probe=1 && [ -e /dev/mmc2.0 ] && mount /dev/mmc2.0 /
 # automount tftp server based on $eth0.serverip
 mkdir -p /mnt/tftp
 automount /mnt/tftp 'ifup eth0 && mount -t tftp $eth0.serverip /mnt/tftp'
+
+# automount USB mass storage device
+mkdir -p /mnt/usb
+automount -d /mnt/usb 'usb && [ -e /dev/disk0.0 ] && mount /dev/disk0.0 /mnt/usb'
