@@ -21,6 +21,9 @@
 #define MII_EXPANSION		0x06	/* Expansion register          */
 #define MII_CTRL1000		0x09	/* 1000BASE-T control          */
 #define MII_STAT1000		0x0a	/* 1000BASE-T status           */
+#define MII_XCTRL		0x0b	/* Extended register control   */
+#define MII_XWRITE		0x0c	/* Extended register write     */
+#define MII_XREAD		0x0d	/* Extended register read      */
 #define	MII_MMD_CTRL		0x0d	/* MMD Access Control Register */
 #define	MII_MMD_DATA		0x0e	/* MMD Access Data Register */
 #define MII_ESTATUS		0x0f	/* Extended Status             */

@@ -268,12 +268,32 @@ static int fec_get_hwaddr(struct eth_device *dev, unsigned char *mac)
 static int fec_set_hwaddr(struct eth_device *dev, unsigned char *mac)
 {
 	struct fec_priv *fec = (struct fec_priv *)dev->priv;
+	uint16_t mac_high, mac_mid, mac_low;
 
 	/*
 	 * Set physical address
 	 */
 	writel((mac[0] << 24) + (mac[1] << 16) + (mac[2] << 8) + mac[3], fec->regs + FEC_PADDR1);
 	writel((mac[4] << 24) + (mac[5] << 16) + 0x8808, fec->regs + FEC_PADDR2);
+
+	/*
+	 * the physical address must also be written into some extended phy
+	 * registers, because it is not a real phy, it is an FPGA instead
+	 */
+#define MII_MAC_32_47 0x8080
+#define MII_MAC_16_31 0x8081
+#define MII_MAC_0_15 0x8082
+
+	mac_high = __be16_to_cpu(readw(&mac[0]));
+	mac_mid = __be16_to_cpu(readw(&mac[2]));
+	mac_low = __be16_to_cpu(readw(&mac[4]));
+
+	fec_miibus_write(&fec->miibus, 0x00, MII_XCTRL, MII_MAC_32_47);
+	fec_miibus_write(&fec->miibus, 0x00, MII_XWRITE, mac_high);
+	fec_miibus_write(&fec->miibus, 0x00, MII_XCTRL, MII_MAC_16_31);
+	fec_miibus_write(&fec->miibus, 0x00, MII_XWRITE, mac_mid);
+	fec_miibus_write(&fec->miibus, 0x00, MII_XCTRL, MII_MAC_0_15);
+	fec_miibus_write(&fec->miibus, 0x00, MII_XWRITE, mac_low);
 
         return 0;
 }
