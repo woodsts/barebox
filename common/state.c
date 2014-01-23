@@ -686,6 +686,116 @@ static int get_meminfo(const char *path, struct mtd_info_user *meminfo)
 }
 
 /*
+ * DTB backend implementation
+ */
+struct state_backend_dtb {
+	struct state_backend backend;
+	int need_erase;
+};
+
+static int state_backend_dtb_load(struct state_backend *backend, struct state *state)
+{
+	struct device_node *root;
+	void *fdt;
+	int len, ret;
+
+	fdt = read_file(backend->path, &len);
+	if (!fdt) {
+		dev_err(&state->dev, "cannot read %s\n", backend->path);
+		return -EINVAL;
+	}
+
+	root = of_unflatten_dtb(NULL, fdt);
+
+	free(fdt);
+
+	if (IS_ERR(root))
+		return PTR_ERR(root);
+
+	ret = state_from_node(state, root, 0);
+
+	return ret;
+}
+
+static int state_backend_dtb_save(struct state_backend *backend, struct state *state)
+{
+	struct state_backend_dtb *backend_dtb = container_of(backend,
+			struct state_backend_dtb, backend);
+	int ret, fd;
+	struct device_node *root;
+	struct fdt_header *fdt;
+
+	root = state_to_node(state);
+	if (IS_ERR(root))
+		return PTR_ERR(root);
+
+	fdt = of_flatten_dtb(root);
+	if (!fdt)
+		return -EINVAL;
+
+	fd = open(backend->path, O_WRONLY);
+	if (fd < 0) {
+		ret = fd;
+		goto out;
+	}
+
+	if (backend_dtb->need_erase) {
+		ret = erase(fd, fdt32_to_cpu(fdt->totalsize), 0);
+		if (ret) {
+			close(fd);
+			goto out;
+		}
+	}
+
+	ret = write(fd, fdt, fdt32_to_cpu(fdt->totalsize));
+
+	close(fd);
+
+	if (ret < 0)
+		goto out;
+
+	ret = 0;
+out:
+	free(fdt);
+	of_delete_node(root);
+
+	return ret;
+}
+
+/*
+ * state_backend_dtb_file - create a dtb backend store for a state instance
+ *
+ * @state	The state instance to work on
+ * @path	The path where the state will be stored to
+ */
+int state_backend_dtb_file(struct state *state, const char *path)
+{
+	struct state_backend_dtb *backend_dtb;
+	struct state_backend *backend;
+	struct mtd_info_user meminfo;
+	int ret;
+
+	if (state->backend)
+		return -EBUSY;
+
+	backend_dtb = xzalloc(sizeof(*backend_dtb));
+	backend = &backend_dtb->backend;
+
+	backend->load = state_backend_dtb_load;
+	backend->save = state_backend_dtb_save;
+	backend->path = xstrdup(path);
+	backend->name = "dtb";
+
+	state->backend = backend;
+
+	ret = get_meminfo(backend->path, &meminfo);
+	if (!ret)
+		backend_dtb->need_erase = 1;
+
+	return 0;
+}
+
+/*
  * Raw backend implementation
  */
 struct state_backend_raw {

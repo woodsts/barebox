@@ -49,6 +49,8 @@ static int state_probe(struct device_d *dev)
 	of_property_read_string(np, "backend-type", &backend_type);
 	if (!strcmp(backend_type, "raw"))
 		ret = state_backend_raw_file(state, path, 0, 0);
+	else if (!strcmp(backend_type, "dtb"))
+		ret = state_backend_dtb_file(state, path);
 	else
 		dev_warn(dev, "invalid backend type: %s\n", backend_type);
 
