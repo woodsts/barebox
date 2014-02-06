@@ -26,6 +26,7 @@
 #include <fs.h>
 
 #include <linux/mtd/mtd-abi.h>
+#include <linux/mtd/mtd.h>
 #include <linux/list.h>
 #include <linux/err.h>
 
@@ -1038,7 +1039,7 @@ int state_backend_raw_file(struct state *state, const char *path, off_t offset,
 	state->backend = backend;
 
 	ret = get_meminfo(backend->path, &meminfo);
-	if (!ret) {
+	if (!ret && !(meminfo.mtd->flags & MTD_NO_ERASE)) {
 		backend_raw->need_erase = 1;
 		backend_raw->step = ALIGN(backend_raw->size_full, meminfo.erasesize);
 		dev_dbg(&state->dev, "is a mtd, adjust stepsize to %ld\n", backend_raw->step);
