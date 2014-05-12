@@ -94,6 +94,13 @@
 			names = "invalid", "valid";
 			default = <0>;
 		};
+
+		network_mac@5 {
+			/* fixed MAC for the FEC */
+			reg = <16 6>;
+			type = "mac";
+			default = <0x00 0x00 0x00 0x00 0x00 0x00>;
+		};
 	};
 };
 
@@ -126,7 +133,7 @@
 
 		/*
 		 * the 'state' comes with 16 bytes overhead
-		 * and 16 bytes (4 words) of payload. We need to
+		 * and 22 bytes (6 words) of payload. We need to
 		 * reserve the space for at least two copies here
 		 */
 		partition@1 {
