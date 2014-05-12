@@ -123,8 +123,9 @@ static int at1006_core_init(void)
 	at1006_enable_spi();
 	at1006_enable_clock_gpios();
 
+#ifndef CONFIG_MACH_ARKONA_AT1006_IGNORE_ENV_IN_NOR
 	of_device_enable_path("/chosen/environment-spi");
-
+#endif
 	return 0;
 }
 postcore_initcall(at1006_core_init);

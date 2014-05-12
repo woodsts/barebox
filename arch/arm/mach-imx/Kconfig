@@ -492,6 +492,19 @@ endchoice
 
 menu "Board specific settings"
 
+if MACH_ARKONA_AT1006
+
+config MACH_ARKONA_AT1006_IGNORE_ENV_IN_NOR
+	bool "ignore NOR environment"
+	help
+	  Enable this entry if Barebox should always ignore an environment in
+	  the NOR memory. This is a useful option for the special production
+	  Barebox which should initialize the AT1006 CPU card and should not be
+	  confused by any existing settings.
+	  If enabled, Barebox always uses its built-in environment.
+
+endif
+
 if MACH_PCM037
 
 choice
