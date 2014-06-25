@@ -52,6 +52,7 @@
 #define AT1006_USB1_OC IMX_GPIO_NR(3, 30)
 #define AT1006_SPI_NOR_SELECT IMX_GPIO_NR(1, 17)
 #define AT1006_SPI_MRAM_SELECT IMX_GPIO_NR(5, 25)
+#define AT1006_RESET_OUT_2ND_CPU IMX_GPIO_NR(6, 16)
 
 static iomux_v3_cfg_t at1006_pads_gpio[] = {
 	MX6Q_PAD_EIM_D31__GPIO_3_31,
@@ -109,6 +110,11 @@ static void at1006_enable_spi(void)
 	gpio_direction_output(AT1006_SPI_MRAM_SELECT, 1);
 }
 
+static void at1006_reset_second_cpu_module(void)
+{
+	gpio_direction_output(AT1006_RESET_OUT_2ND_CPU, 0);
+}
+
 extern void at1006_enable_clock_gpios(void);
 
 static int at1006_core_init(void)
@@ -119,6 +125,7 @@ static int at1006_core_init(void)
 	imx6_init_lowlevel();
 
 	at1006_detect_cpu_slot();
+	at1006_reset_second_cpu_module();
 	at1006_enable_usbh1();
 	at1006_enable_spi();
 	at1006_enable_clock_gpios();

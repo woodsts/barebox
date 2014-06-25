@@ -38,6 +38,8 @@
 				MX6QDL_PAD_DI0_PIN2__GPIO4_IO18 0x0010040 /* FPGA status */
 				MX6QDL_PAD_DI0_PIN3__GPIO4_IO19 0x0010040 /* FPGA config done */
 				MX6QDL_PAD_DI0_PIN4__GPIO4_IO20 0x00000B0 /* FPGA config */
+				/* RESET control for the slave CPU module */
+				MX6QDL_PAD_NANDF_CS3__GPIO6_IO16 0x4000B0B1
 			>;
 		};
 	};
