@@ -276,6 +276,10 @@ static int fec_set_hwaddr(struct eth_device *dev, unsigned char *mac)
 	writel((mac[0] << 24) + (mac[1] << 16) + (mac[2] << 8) + mac[3], fec->regs + FEC_PADDR1);
 	writel((mac[4] << 24) + (mac[5] << 16) + 0x8808, fec->regs + FEC_PADDR2);
 
+	if (!memcmp(mac, "\x00\x0B\x72\x05\xC3\x28", 6) ||
+	    !memcmp(mac, "\x00\x0B\x72\x05\xC3\x29", 6))
+		return 0; /* address for internal communication already hardcoded */
+
 	/*
 	 * the physical address must also be written into some extended phy
 	 * registers, because it is not a real phy, it is an FPGA instead
