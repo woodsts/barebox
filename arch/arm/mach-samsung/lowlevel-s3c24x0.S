@@ -251,7 +251,7 @@ s3c24x0_nand_boot:
 	beq 2f
 	mov pc, lr	/* NOR case: nothing to do here */
 
-2:	ldr sp, =(TEXT_BASE - SZ_2M)	/* Setup a temporary stack in SDRAM */
+2:	ldr sp, =_text	/* Setup a temporary stack in SDRAM */
 /*
  * We still run at a location we are not linked to. But lets still running
  * from the internal SRAM, this may speed up the boot
@@ -262,7 +262,7 @@ s3c24x0_nand_boot:
 /*
  * Adjust the return address to the correct address in SDRAM
  */
-	ldr r1, =(TEXT_BASE - SZ_2M)
+	ldr r1, =_text
 	add lr, lr, r1
 
 	mov pc, lr
