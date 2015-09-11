@@ -32,3 +32,13 @@ config CRYPTO_DEV_FSL_CAAM_RNG
 	default y
 	help
 	  Selecting this will register the SEC4 hardware rng.
+
+config CRYPTO_DEV_FSL_CAAM_BLOB_GEN
+	bool "CAAM - Blob Generator (EXPERIMENTAL)"
+	depends on CRYPTO_DEV_FSL_CAAM
+	select BLOBGEN
+	select BASE64
+	default n
+	help
+	  Selecting this will register the device /dev/blob which can en/decapsulate
+	  red blobs with the help of the CAAM.
