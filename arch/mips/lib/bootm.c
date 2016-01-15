@@ -17,6 +17,11 @@ static int do_bootm_barebox(struct image_data *data)
 	if (!barebox)
 		return -EINVAL;
 
+	if (data->dryrun) {
+		free(barebox)
+		return 0;
+	}
+
 	shutdown_barebox();
 
 	barebox();
