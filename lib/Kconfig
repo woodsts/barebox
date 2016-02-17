@@ -80,4 +80,7 @@ source lib/bootstrap/Kconfig
 config PRINTF_UUID
 	bool
 
+config BLOBGEN
+	bool "include blob encode/decode support"
+
 endmenu

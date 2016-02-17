@@ -17,6 +17,7 @@ obj-y			+= readkey.o
 obj-y			+= kfifo.o
 obj-y			+= libbb.o
 obj-y			+= libgen.o
+obj-$(CONFIG_BLOBGEN)	+= blobgen.o
 obj-y			+= stringlist.o
 obj-y			+= cmdlinepart.o
 obj-y			+= recursive_action.o
