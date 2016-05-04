@@ -37,6 +37,11 @@
 #define MAX_BLOB_LEN		4096
 #define DESC_LEN		64
 
+#define pr_hex_dump_debug(prefix_str, prefix_type, rowsize, groupsize, buf, len, ascii) \
+	({ \
+		(7) <= LOGLEVEL ? print_hex_dump(KERN_DEBUG, prefix_str, prefix_type, rowsize, groupsize, buf, len, ascii) : 0; \
+	 })
+
 struct blob_job_result {
         int err;
 };
