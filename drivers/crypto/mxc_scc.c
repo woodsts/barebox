@@ -387,6 +387,7 @@ static int mxc_scc_get_config(struct mxc_scc *scc)
 static int mxc_scc_get_state(struct mxc_scc *scc)
 {
 	int status, ret;
+	const char *statestr;
 
 	status = readl(scc->base + SCC_SMN_STATUS) &
 		       SCC_SMN_STATUS_STATE_MASK;
@@ -407,16 +408,24 @@ static int mxc_scc_get_state(struct mxc_scc *scc)
 
 	switch (status) {
 	case SCC_SMN_STATE_NON_SECURE:
+		statestr = "non-secure";
+		ret = 0;
+		break;
 	case SCC_SMN_STATE_SECURE:
+		statestr = "secure";
 		ret = 0;
 		break;
 	case SCC_SMN_STATE_FAIL:
+		statestr = "fail";
 		ret = -EIO;
 		break;
 	default:
+		statestr = "unknown";
 		ret = -EINVAL;
 		break;
 	}
+
+	dev_info(scc->dev, "starting in %s mode\n", statestr);
 
 	return ret;
 }
