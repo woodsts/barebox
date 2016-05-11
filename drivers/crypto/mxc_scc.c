@@ -128,12 +128,6 @@
 /* Fixed padding for appending to plaintext to fill out a block */
 static char scc_block_padding[8] = { 0x80, 0, 0, 0, 0, 0, 0, 0 };
 
-enum mxc_scc_state {
-	SCC_STATE_OK,
-	SCC_STATE_UNIMPLEMENTED,
-	SCC_STATE_FAILED
-};
-
 struct mxc_scc {
 	struct device_d	*dev;
 	void __iomem		*base;
@@ -390,10 +384,9 @@ static int mxc_scc_get_config(struct mxc_scc *scc)
 	return 0;
 }
 
-static enum mxc_scc_state mxc_scc_get_state(struct mxc_scc *scc)
+static int mxc_scc_get_state(struct mxc_scc *scc)
 {
-	enum mxc_scc_state state;
-	int status;
+	int status, ret;
 
 	status = readl(scc->base + SCC_SMN_STATUS) &
 		       SCC_SMN_STATUS_STATE_MASK;
@@ -415,23 +408,22 @@ static enum mxc_scc_state mxc_scc_get_state(struct mxc_scc *scc)
 	switch (status) {
 	case SCC_SMN_STATE_NON_SECURE:
 	case SCC_SMN_STATE_SECURE:
-		state = SCC_STATE_OK;
+		ret = 0;
 		break;
 	case SCC_SMN_STATE_FAIL:
-		state = SCC_STATE_FAILED;
+		ret = -EIO;
 		break;
 	default:
-		state = SCC_STATE_UNIMPLEMENTED;
+		ret = -EINVAL;
 		break;
 	}
 
-	return state;
+	return ret;
 }
 
 static int mxc_scc_probe(struct device_d *dev)
 {
 	struct mxc_scc *scc;
-	enum mxc_scc_state state;
 	int ret;
 
 	scc = xzalloc(sizeof(*scc));
@@ -467,11 +459,10 @@ static int mxc_scc_probe(struct device_d *dev)
 	if (ret)
 		goto err_out;
 
-	state = mxc_scc_get_state(scc);
+	ret = mxc_scc_get_state(scc);
 
-	if (state != SCC_STATE_OK) {
-		dev_err(dev, "SCC in unusable state %d\n", state);
-		ret = -EINVAL;
+	if (ret) {
+		dev_err(dev, "SCC in unusable state\n");
 		goto err_out;
 	}
 
