@@ -76,6 +76,8 @@ image-$(CONFIG_MACH_NETGEAR_RN2120) += barebox-netgear-rn2120.img
 FILE_barebox-netgear-rn2120-2nd.img = start_netgear_rn2120.pblb
 image-$(CONFIG_MACH_NETGEAR_RN2120) += barebox-netgear-rn2120-2nd.img
 
+$(obj)/start_netgear_rn2120.pblx.kwbimg: $(board)/netgear-rn2120/binary.0
+
 # ----------------------- Armada 38x based boards ---------------------------
 BOOTSRC_start_turris_omnia.pblb.mvebu1img = spi
 BINHDR_start_turris_omnia.pblb.mvebu1img = $(board)/turris-omnia/binary.0
