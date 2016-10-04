@@ -328,13 +328,11 @@
 			partition@0 {
 				label = "u-boot";
 				reg = <0x0000000 0x180000>;  /* 1.5MB */
-				read-only;
 			};
 
 			partition@180000 {
 				label = "u-boot-env";
 				reg = <0x180000 0x20000>;    /* 128KB */
-				read-only;
 			};
 
 			partition@200000 {
