@@ -48,6 +48,15 @@ image-$(CONFIG_MACH_LENOVO_IX4_300D) += barebox-lenovo-ix4-300d.img
 FILE_barebox-lenovo-ix4-300d-2nd.img = start_lenovo_ix4_300d.pblb
 image-$(CONFIG_MACH_LENOVO_IX4_300D) += barebox-lenovo-ix4-300d-2nd.img
 
+BOOTSRC_start_arkona_at1101.pblb.mvebu1img = spi
+BINHDR_start_arkona_at1101.pblb.mvebu1img = $(board)/arkona-at1101/binary.0
+FILE_barebox-arkona-at1101.img = start_arkona_at1101.pblb.mvebu1img
+pblb-$(CONFIG_MACH_ARKONA_AT1101]) += start_arkona_at1101
+image-$(CONFIG_MACH_ARKONA_AT1101) += barebox-arkona-at1101.img
+
+FILE_barebox-arkona-at1101-2nd.img = start_arkona_at1101.pblb
+image-$(CONFIG_MACH_ARKONA_AT1101) += barebox-arkona-at1101-2nd.img
+
 BOOTSRC_start_marvell_armada_xp_gp.pblb.mvebu1img = spi
 BINHDR_start_marvell_armada_xp_gp.pblb.mvebu1img = $(board)/marvell-armada-xp-gp/binary.0
 FILE_barebox-marvell-armada-xp-gp.img = start_marvell_armada_xp_gp.pblb.mvebu1img

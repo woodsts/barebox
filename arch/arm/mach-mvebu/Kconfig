@@ -52,6 +52,10 @@ config MACH_NETGEAR_RN104
 
 comment "Armada XP based boards"
 
+config MACH_ARKONA_AT1101
+	bool "Arkona AT1101"
+	select ARCH_ARMADA_XP
+
 config MACH_LENOVO_IX4_300D
 	bool "Lenovo Iomega ix4-300d"
 	select ARCH_ARMADA_XP
