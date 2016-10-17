@@ -3,6 +3,7 @@ obj-$(CONFIG_MACH_ADVANTECH_ROM_742X)		+= advantech-mx6/
 obj-$(CONFIG_MACH_AFI_GF)			+= afi-gf/
 obj-$(CONFIG_MACH_ANIMEO_IP)			+= animeo_ip/
 obj-$(CONFIG_MACH_ARCHOSG9)			+= archosg9/
+obj-$(CONFIG_MACH_ARKONA_AT1101)		+= arkona-at1101/
 obj-$(CONFIG_MACH_AT91SAM9260EK)		+= at91sam9260ek/
 obj-$(CONFIG_MACH_AT91SAM9261EK)		+= at91sam9261ek/
 obj-$(CONFIG_MACH_AT91SAM9263EK)		+= at91sam9263ek/

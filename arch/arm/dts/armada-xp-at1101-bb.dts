@@ -1,0 +1,363 @@
+/*
+ * Barebox specific DT overlay for Arkona AT1101
+ */
+
+/dts-v1/;
+
+#include <dt-bindings/gpio/gpio.h>
+#include "arm/armada-xp-mv78460.dtsi"
+
+/ {
+	model = "Arkona AT1101";
+	compatible = "arkona,at1101", "marvell,armadaxp-mv78460", "marvell,armadaxp", "marvell,armada-370-xp";
+
+	aliases {
+		state = &state;
+	};
+
+	chosen {
+		stdout-path = "/soc/internal-regs/serial@12000";
+
+		environment {
+			compatible = "barebox,environment";
+			device-path = &bareboxenv;
+		};
+	};
+
+	memory {
+		device_type = "memory";
+		reg = <0 0x00000000 0 0x40000000>; /* 1GB */
+	};
+
+	soc {
+		ranges = <MBUS_ID(0xf0, 0x01) 0 0 0xd0000000 0x100000
+			MBUS_ID(0x01, 0x1d) 0 0 0xfff00000 0x100000
+			MBUS_ID(0x09, 0x09) 0 0 0xf1100000 0x10000
+			MBUS_ID(0x09, 0x05) 0 0 0xf1110000 0x10000>;
+
+		pcie-controller {
+			status = "okay";
+
+			/* Connected to Option 1 FPGA 1x */
+			pcie@1,0 {
+				/* Port 0, Lane 0 */
+				status = "okay";
+				reset-gpios = <&gpio0 0 1>;
+			};
+
+			/* Connected to Option 2 FPGA 1x */
+			pcie@2,0 {
+				/* Port 0, Lane 1 */
+				status = "okay";
+				reset-gpios = <&gpio0 3 1>;
+			};
+
+			/*
+			 * Connected to Base FPGA 4x
+			 * If this is enabled in barebox the device doesn't
+			 * appear in Linux.
+			 */
+			pcie@9,0 {
+				/* Port 2, Lane 0 */
+				status = "okay";
+				reset-gpios = <&gpio0 6 1>;
+				reset-delay-us = <100000>;
+			};
+		};
+
+		internal-regs {
+			usb@50000 {
+				status = "okay";
+			};
+
+			sata@a0000 {
+				status = "okay";
+				nr-ports = <2>;
+			};
+		};
+	};
+
+	i2c-gpio {
+		compatible = "i2c-gpio";
+		pinctrl-0 = <&i2c_gpio_pins>;
+		pinctrl-names = "default";
+
+		#size-cells = <0>;
+		#address-cells = <1>;
+
+		gpios = <&gpio1 19 GPIO_ACTIVE_HIGH /* SDA */
+			 &gpio1 17 GPIO_ACTIVE_HIGH /* SCL */>;
+
+		eeprom@50 {
+			compatible = "atmel,spd";
+			reg = <0x50>;
+
+			read-only;
+		};
+	};
+
+	state: state {
+		magic = <0x52410a4b>;
+		compatible = "barebox,state";
+		backend-type = "raw";
+		backend-storage-type = "direct";
+		backend-stridesize = <0x80>;
+		backend = <&state_part>;
+
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		bootstate {
+			#address-cells = <1>;
+			#size-cells = <1>;
+
+			system0 {
+				#address-cells = <1>;
+				#size-cells = <1>;
+
+				remaining_attempts {
+					reg = <0x0 0x4>;
+					type = "uint32";
+				};
+
+				priority {
+					reg = <0x4 0x4>;
+					type = "uint32";
+					default = <20>;
+				};
+			};
+
+			system1 {
+				#address-cells = <1>;
+				#size-cells = <1>;
+
+				remaining_attempts {
+					reg = <0x10 0x4>;
+					type = "uint32";
+				};
+
+				priority {
+					reg = <0x14 0x4>;
+					type = "uint32";
+					default = <20>;
+				};
+			};
+
+			last_chosen {
+				reg = <0x20 0x04>;
+				type = "uint32";
+			};
+		};
+
+		fpga_prefix {
+			reg = <0x30 0x30>;
+			type = "string";
+		};
+	};
+
+	oled_vbat: fixed-regulator {
+		compatible = "regulator-fixed";
+		regulator-name = "vbat-supply";
+		gpio = <&gpio1 0 0>;
+		enable-active-low;
+	};
+};
+
+&eth0 { /* Base FPGA */
+	status = "okay";
+
+	phy-mode = "drsgmii";
+
+	fixed-link {
+		speed = <1000>; /* <2500> */
+		full-duplex;
+	};
+};
+
+&eth1 {
+	status = "okay";
+
+	phy = <&phy0>;
+	phy-mode = "sgmii";
+};
+
+&eth2 { /* Base FPGA */
+	status = "okay";
+
+	phy-mode = "drsgmii";
+
+	/* managed = "in-band-status"; */
+	fixed-link {
+		speed = <1000>; /* <2500> */
+		full-duplex;
+	};
+};
+
+&eth3 { /* ETH Midplane */
+	status = "okay";
+
+	phy-mode = "sgmii";
+};
+
+&i2c0 {
+	status = "okay";
+
+	ssd1306: oled@3c {
+		compatible = "solomon,ssd1306fb-i2c";
+		pinctrl-0 = <&frontpanel_display_pins>;
+		reg = <0x3c>;
+		reset-gpios = <&gpio1 1 0>;
+		vbat-supply = <&oled_vbat>;
+		solomon,height = <16>;
+		solomon,width = <96>;
+		solomon,page-offset = <0>;
+		solomon,com-invdir;
+		solomon,com-seq;
+	};
+};
+
+&i2c1 {
+	status = "okay";
+
+	wd@28 {
+		compatible = "arkona,at1101wd";
+		reg = <0x28>;
+	};
+
+	rtc@32 {
+		compatible = "microcrystal,rv8803";
+		reg = <0x32>;
+	};
+};
+
+&mdio {
+	status = "okay";
+
+	phy0: phy@0 {
+		pinctrl-names = "default";
+		pinctrl-0 = <&phy0_pins>;
+
+		compatible = "ethernet-phy-ieee802.3-c22";
+		reg = <0>;
+		reset-gpio = <&gpio0 5 GPIO_ACTIVE_LOW>;
+		marvell,reg-init = <1 26 7 6>;
+	};
+};
+
+&pinctrl {
+	pinctrl-0 = <&hog_pins>;
+	pinctrl-names = "default";
+
+	fpga_pins: fpga-pins {
+		marvell,pins = "mpp7", "mpp16", "mpp17";
+		marvell,function = "gpio";
+	};
+
+	hog_pins: hog-pins-0 {
+		marvell,pins = "mpp55", "mpp56", "mpp57", "mpp58", "mpp59", "mpp60", "mpp61";
+		marvell,function = "gpio";
+	};
+
+	i2c_gpio_pins: i2c-gpio-pins {
+		marvell,pins = "mpp49", "mpp51";
+		marvell,function = "gpio";
+	};
+
+	phy0_pins: phy0-pins {
+		marvell,pins = "mpp5";
+		marvell,function = "gpio";
+	};
+
+	frontpanel_display_pins: frontpanel-display-pins {
+		marvell,pins = "mpp33";
+		marvell,function = "gpio";
+	};
+
+	spi0_cs1_pins: spi0-cs1-pins {
+		marvell,pins = "mpp40";
+		marvell,function = "spi0";
+	};
+
+	spi1_wo_pins: spi1-wo-pins {
+		marvell,pins = "mpp13", "mpp14";
+		marvell,function = "spi1";
+	};
+};
+
+&spi0 {
+	status = "okay";
+	pinctrl-0 = <&spi0_pins>, <&spi0_cs1_pins>;
+	pinctrl-names = "default";
+
+	nor@0 {
+		compatible = "m25p32", "m25p80";
+		spi-max-frequency = <33000000>;
+		reg = <0>;
+
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		partition@0 {
+			label = "barebox";
+			reg = <0x0 0x80000>;
+		};
+
+		bareboxenv: partition@1 {
+			label = "barebox-environment";
+			reg = <0x80000 0x20000>;
+		};
+	};
+
+	mram@1 {
+		compatible = "everspin,mr25h40";
+		spi-max-frequency = <20000000>;
+		reg = <1>;
+
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		partition@0 {
+			label = "entropy";
+			reg = <0x00000 0x00200>;
+		};
+
+		state_part: partition@200 {
+			label = "state";
+			reg = <0x00200 0x00200>;
+		};
+
+		partition@400 {
+			label = "pcbinfo";
+			reg = <0x00400 0x00080>;
+		};
+
+		partition@480 {
+			label = "general";
+			reg = <0x00480 0x7fb80>;
+		};
+	};
+};
+
+&spi1 {
+	status = "okay";
+	pinctrl-0 = <&spi1_wo_pins>, <&fpga_pins>;
+	pinctrl-names = "default";
+
+	fpga: arria@0 {
+		compatible = "altr,fpga-passive-serial";
+		reg = <0>;
+
+		nstat-gpios = <&gpio0 17 0>;
+		confd-gpios = <&gpio0 7 0>;
+		nconfig-gpios = <&gpio0 16 0>;
+		spi-max-frequency = <60000000>;
+	};
+};
+
+&uart0 {
+	status = "okay";
+};
+
+&uart1 {
+	status = "okay";
+};
