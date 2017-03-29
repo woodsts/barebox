@@ -125,6 +125,34 @@ static void setup_usb_phys(void)
 	}
 }
 
+static void __iomem *pcie_bases[] = {
+	IOMEM(MVEBU_REMAP_INT_REG_BASE + 0x40000),
+	IOMEM(MVEBU_REMAP_INT_REG_BASE + 0x44000),
+	IOMEM(MVEBU_REMAP_INT_REG_BASE + 0x48000),
+	IOMEM(MVEBU_REMAP_INT_REG_BASE + 0x4c000),
+	IOMEM(MVEBU_REMAP_INT_REG_BASE + 0x80000),
+	IOMEM(MVEBU_REMAP_INT_REG_BASE + 0x84000),
+	IOMEM(MVEBU_REMAP_INT_REG_BASE + 0x88000),
+	IOMEM(MVEBU_REMAP_INT_REG_BASE + 0x8c000),
+	IOMEM(MVEBU_REMAP_INT_REG_BASE + 0x42000),
+	IOMEM(MVEBU_REMAP_INT_REG_BASE + 0x82000),
+};
+
+static void armada_370_xp_update_pcie_window_location(void)
+{
+	int i;
+
+	/*
+	* The PCIe core accesses the internal registers and so must know the
+	* actual offset. Tell it where our registers are.
+	* The right thing would be to teach linux to setup this offset before
+	* using the PCIe core.
+	*/
+
+	for (i = 0; i < ARRAY_SIZE(pcie_bases); ++i)
+		writel(MVEBU_REMAP_INT_REG_BASE + 0xc, pcie_bases[i] + 0x10);
+}
+
 static int armada_370_xp_init_soc(void)
 {
 	u32 reg;
@@ -155,6 +183,8 @@ static int armada_370_xp_init_soc(void)
 		/* Configure USB PLL and PHYs on AXP */
 		setup_usb_phys();
 	}
+
+	armada_370_xp_update_pcie_window_location();
 
 	return 0;
 }
