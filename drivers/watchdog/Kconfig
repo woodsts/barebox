@@ -117,4 +117,10 @@ config F71808E_WDT
 	  F71862FG, F71868, F71869, F71882FG, F71889FG, F81865 and F81866
 	  Super I/O controllers.
 
+config WATCHDOG_AT1101
+	bool "Watchdog for Arkona AT1101"
+	select CRC32
+	help
+	  Add support for watchdog on the Arkona AT1101 board.
+
 endif
