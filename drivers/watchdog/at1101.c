@@ -421,7 +421,6 @@ static int at1101wd_probe(struct device_d *dev)
 	int ret;
 
 	priv = xzalloc(sizeof(struct at1101wd));
-	priv->wd.priority = of_get_watchdog_priority(dev->device_node);
 	priv->wd.set_timeout = at1101wd_watchdog_set_timeout;
 	priv->client = to_i2c_client(dev);
 	priv->dev = dev;
