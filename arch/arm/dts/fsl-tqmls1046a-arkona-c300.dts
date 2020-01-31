@@ -1,0 +1,144 @@
+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+/*
+ * Device Tree Include file for TQMLS1046A SoM on MBLS10xxA from TQ
+ *
+ * Copyright 2018 TQ-Systems GmbH
+ */
+
+/dts-v1/;
+
+#include <dt-bindings/input/input.h>
+#include <dt-bindings/gpio/gpio.h>
+
+#include "fsl-tqmls1046a.dtsi"
+
+/ {
+	model = "TQ TQMLS1046A SoM on Arkona C300 board";
+	compatible = "arkona,c300", "tqc,tqmls1046a", "fsl,ls1046a";
+
+	aliases {
+		serial0 = &duart0;
+		serial1 = &duart1;
+		mmc0 = &esdhc;
+		qspiflash0 = &qflash0;
+		qspiflash1 = &qflash1;
+	};
+
+	chosen {
+		stdout-path = "serial1:115200n8";
+
+		environment-qspi {
+			compatible = "barebox,environment";
+			device-path = &environment_qspi;
+			status = "disabled";
+		};
+	};
+
+	clk_156m25: clk_156m25 {
+		#clock-cells = <0>;
+		compatible = "fixed-clock";
+		clock-frequency = <156250000>;
+	};
+};
+
+&dspi {
+	status = "okay";
+	fram@0 {
+		compatible = "cy15x104qn"; /* FIXME: Not yet supported by spi-nor */
+		reg = <0>;
+	};
+};
+
+&duart0 {
+	status = "okay";
+};
+
+&duart1 {
+	status = "okay";
+};
+
+&gpio0 {
+	gpio-line-names = "", "", "", "",
+			  "", "", "", "",
+			  "", "", "", "",
+			  "", "", "", "",
+			  "", "", "", "",
+			  "", "", "", "",
+			  "ps2_present", "ps1_present", "io_present", "io_pwr_goodn",
+			  "module_slot_id2", "module_slot_id1", "module_slot_id0", "";
+};
+
+&gpio2 {
+	gpio-line-names = "", "", "", "",
+			  "", "", "", "",
+			  "", "", "", "",
+			  "", "", "", "",
+			  "", "", "", "",
+			  "", "", "", "",
+			  "", "hsc_wpn", "", "usb_fifo_reset",
+			  "", "", "", "";
+};
+
+&i2c1 {
+	status = "okay";
+	si5341: clock-generator@74 {
+		compatible = "silabs,si5341";
+		reg = <0x74>;
+		#clock-cells = <2>;
+		clocks = <&clk_156m25>;
+		clock-names = "in0";
+	};
+};
+
+&i2c3 {
+	status = "okay";
+
+	wd@28 {
+		compatible = "arkona,at1101wd";
+		reg = <0x28>; /* FIXME: correct? */
+	};
+
+	rtc@32 {
+		compatible = "microcrystal,rv8803";
+		reg = <0x32>;
+	};
+};
+
+&usb0 {
+	dr_mode = "otg";
+};
+
+&usb1 {
+	status = "disabled";
+};
+
+#include <arm64/freescale/fsl-ls1046-post.dtsi>
+#include <dt-bindings/net/ti-dp83867.h>
+
+&fman0 {
+	status = "okay";
+};
+
+&qflash0 {
+	partitions {
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		compatible = "fixed-partitions";
+
+		partition@0 {
+			label = "barebox";
+			reg = <0x0 0x200000>;
+		};
+
+		environment_qspi: partition@200000 {
+			label = "barebox-environment";
+			reg = <0x200000 0x80000>;
+		};
+
+		partition@280000 {
+			label = "data";
+			reg = <0x280000 0x0>;
+		};
+	};
+};
