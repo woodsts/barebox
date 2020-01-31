@@ -30,14 +30,35 @@ static int tqmls1046a_mem_init(void)
 }
 mem_initcall(tqmls1046a_mem_init);
 
+static void ls1046a_add_memory(unsigned long long size)
+{
+	unsigned long long lower, upper;
+
+	lower = min_t(unsigned long long, size, SZ_2G);
+	arm_add_mem_device("ram0", 0x80000000, lower);
+
+	if (size > lower) {
+		upper = size - lower;
+		arm_add_mem_device("ram1", 0x880000000, upper);
+	}
+}
+
 static int tqmls1046a_postcore_init(void)
 {
 	struct ccsr_scfg *scfg = IOMEM(LSCH2_SCFG_ADDR);
 	enum bootsource bootsource;
 	unsigned long sd_bbu_flags = 0, qspi_bbu_flags = 0;
+	unsigned long long memsize;
 
 	if (!of_machine_is_compatible("tqc,tqmls1046a"))
 		return 0;
+
+	if (of_machine_is_compatible("arkona,c300"))
+		memsize = 8ULL << 30;
+	else
+		memsize = SZ_2G;
+
+	ls1046a_add_memory(memsize);
 
 	defaultenv_append_directory(defaultenv_tqmls1046a);
 

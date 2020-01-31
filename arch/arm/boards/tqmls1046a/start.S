@@ -10,3 +10,8 @@ ENTRY_PROC(start_tqmls1046a)
 	b tqmls1046a_entry
 ENTRY_PROC_END(start_tqmls1046a)
 
+ENTRY_PROC(start_arkona_c300)
+	mov x3, #STACK_TOP
+	mov sp, x3
+	b arkona_c300_entry
+ENTRY_PROC_END(start_arkona_c300)
