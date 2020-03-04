@@ -117,6 +117,78 @@
 
 &fman0 {
 	status = "okay";
+
+	ethernet@e0000 { /* EMAC.1 */
+		status = "disabled";
+	};
+
+	ethernet@e2000 { /* EMAC.2 */
+		status = "disabled";
+	};
+
+	ethernet@e4000 { /* EMAC.3 */
+		status = "disabled";
+	};
+
+	ethernet@e6000 { /* EMAC.4 */
+		status = "disabled";
+	};
+
+	ethernet@e8000 { /* EMAC.5 */
+		status = "disabled";
+	};
+
+	ethernet@ea000 { /* EMAC.6 */
+		status = "disabled";
+	};
+
+	ethernet@f0000 { /* EMAC.9 */
+		phy-connection-type = "xgmii";
+	};
+
+	ethernet@f2000 { /* EMAC.10 */
+		phy-connection-type = "xgmii";
+	};
+
+	mdio@e1000 {
+		status = "disabled";
+	};
+
+	mdio@e3000 {
+		status = "disabled";
+	};
+
+	mdio@e5000 {
+		status = "disabled";
+	};
+
+	mdio@e7000 {
+		status = "disabled";
+	};
+
+	mdio@e9000 {
+		status = "disabled";
+	};
+
+	mdio@eb000 {
+		status = "disabled";
+	};
+
+	mdio@f1000 {
+		status = "disabled";
+	};
+
+	mdio@f3000 {
+		status = "disabled";
+	};
+
+	mdio@fc000 {
+		status = "disabled";
+	};
+
+	mdio@fd000 {
+		status = "disabled";
+	};
 };
 
 &qflash0 {
