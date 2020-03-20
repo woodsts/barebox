@@ -177,7 +177,7 @@ int main(void)
 	set_val(GP_INFO1                 ,       0);
 	set_val(GP_INFO2                 ,       0);
 	set_val(UART_EXT                 ,       0); /* see UART_BASE field definition */
-	set_val(IRQ_EXT                  ,       0); /* see IRQ_BASE field definition */
+	set_val(IRQ_EXT                  ,       0); /* 0 => GPIO => see IRQ_BASE field definition */
 	set_val(SPI_EXT                  ,       0); /* see SPI_BASE field definition */
 	set_val(SDHC_EXT                 ,       0); /* see SDHC_BASE field definition */
 	set_val(UART_BASE                ,       6); /* 6 => UART1/2 including RTX/CTS */
@@ -185,7 +185,7 @@ int main(void)
 	set_val(RTC                      ,       1); /* GPIO1_14 */
 	set_val(SDHC_BASE                ,       0); /* internal eMMC */
 	set_val(IRQ_OUT                  ,       1); /* reserved, must be 1 */
-	set_val(IRQ_BASE                 ,       0);
+	set_val(IRQ_BASE                 ,   0x1FE); /* GPIO1[23:30] */
 	set_val(SPI_BASE                 ,       0); /* SPI mode -> FRAM */
 	set_val(IFC_GRP_A_EXT            ,       1); /* 1 => QSPI_A_DATA[3], needed for boot flash? */
 	set_val(IFC_GRP_D_EXT            ,       0);
