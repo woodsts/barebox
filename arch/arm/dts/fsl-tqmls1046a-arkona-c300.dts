@@ -139,15 +139,27 @@
 	};
 
 	ethernet@ea000 { /* EMAC.6 */
-		status = "disabled";
+		phy-connection-type = "sgmii";
+		fixed-link {
+			speed = <1000>;
+			full-duplex;
+		};
 	};
 
 	ethernet@f0000 { /* EMAC.9 */
 		phy-connection-type = "xgmii";
+		fixed-link {
+			speed = <1000>;
+			full-duplex;
+		};
 	};
 
 	ethernet@f2000 { /* EMAC.10 */
 		phy-connection-type = "xgmii";
+		fixed-link {
+			speed = <1000>;
+			full-duplex;
+		};
 	};
 
 	mdio@e1000 {
