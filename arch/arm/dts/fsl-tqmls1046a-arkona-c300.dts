@@ -64,7 +64,7 @@
 			  "", "", "", "",
 			  "", "", "", "",
 			  "", "", "", "",
-			  "ps2_present", "ps1_present", "io_present", "io_pwr_goodn",
+			  "ps1_present", "ps2_present", "io_presentn", "io_pwr_goodn",
 			  "module_slot_id2", "module_slot_id1", "module_slot_id0", "";
 };
 
