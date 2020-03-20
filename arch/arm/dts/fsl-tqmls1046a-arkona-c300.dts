@@ -215,6 +215,30 @@
 	};
 };
 
+&qflash1 {
+	partitions {
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		compatible = "fixed-partitions";
+
+		partition@0 {
+			label = "barebox-alternate";
+			reg = <0x0 0x200000>;
+		};
+
+		partition@200000 {
+			label = "barebox-environment-alternate";
+			reg = <0x200000 0x80000>;
+		};
+
+		partition@280000 {
+			label = "data-alternate";
+			reg = <0x280000 0x0>;
+		};
+	};
+};
+
 &soc {
 	pcie1: pcie@3400000 {
 		status = "okay";
