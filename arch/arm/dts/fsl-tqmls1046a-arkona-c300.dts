@@ -44,7 +44,8 @@
 &dspi {
 	status = "okay";
 	fram@0 {
-		compatible = "cy15x104qn"; /* FIXME: Not yet supported by spi-nor */
+		compatible = "jedec,spi-nor";
+		spi-max-frequency = <50000000>;
 		reg = <0>;
 	};
 };
