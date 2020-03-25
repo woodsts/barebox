@@ -22,6 +22,7 @@
 		mmc0 = &esdhc;
 		qspiflash0 = &qflash0;
 		qspiflash1 = &qflash1;
+		state = &state;
 	};
 
 	chosen {
@@ -39,6 +40,65 @@
 		compatible = "fixed-clock";
 		clock-frequency = <156250000>;
 	};
+
+	state: state {
+		magic = <0x52410a4b>;
+		compatible = "barebox,state";
+		backend-type = "raw";
+		backend-storage-type = "direct";
+		backend-stridesize = <0x80>;
+		backend = <&state_part>;
+
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		bootstate {
+			#address-cells = <1>;
+			#size-cells = <1>;
+
+			system0 {
+				#address-cells = <1>;
+				#size-cells = <1>;
+
+				remaining_attempts {
+					reg = <0x0 0x4>;
+					type = "uint32";
+				};
+
+				priority {
+					reg = <0x4 0x4>;
+					type = "uint32";
+					default = <20>;
+				};
+			};
+
+			system1 {
+				#address-cells = <1>;
+				#size-cells = <1>;
+
+				remaining_attempts {
+					reg = <0x10 0x4>;
+					type = "uint32";
+				};
+
+				priority {
+					reg = <0x14 0x4>;
+					type = "uint32";
+					default = <20>;
+				};
+			};
+
+			last_chosen {
+				reg = <0x20 0x04>;
+				type = "uint32";
+			};
+		};
+
+		fpga_prefix {
+			reg = <0x30 0x30>;
+			type = "string";
+		};
+	};
 };
 
 &dspi {
@@ -47,6 +107,27 @@
 		compatible = "jedec,spi-nor";
 		spi-max-frequency = <50000000>;
 		reg = <0>;
+
+		partitions {
+			compatible = "fixed-partitions";
+			#address-cells = <1>;
+			#size-cells = <1>;
+
+			state_part: partition@0 {
+				label = "state";
+				reg = <0x00000 0x00200>;
+			};
+
+			partition@200 {
+				label = "pcbinfo";
+				reg = <0x00200 0x00080>;
+			};
+
+			partition@280 {
+				label = "general";
+				reg = <0x00280 0x7fd80>;
+			};
+		};
 	};
 };
 
