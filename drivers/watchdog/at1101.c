@@ -293,7 +293,7 @@ static const uint32_t at1101wd_crc_table[256] = {
 	0xAFB010B1, 0xAB710D06, 0xA6322BDF, 0xA2F33668, 0xBCB4666D, 0xB8757BDA, 0xB5365D03, 0xB1F740B4,
 };
 
-uint32_t at1101wd_crc32(uint32_t crc, void *_buf, int length)
+static uint32_t at1101wd_crc32(uint32_t crc, void *_buf, int length)
 {
 	uint8_t *buf = _buf;
 

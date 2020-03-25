@@ -120,7 +120,6 @@ config F71808E_WDT
 config WATCHDOG_AT1101
 	bool "Watchdog for Arkona AT1101"
 	select CRC32
-	depends on ARCH_ARMADA_XP
 	help
 	  Add support for watchdog on the Arkona AT1101 board.
 
