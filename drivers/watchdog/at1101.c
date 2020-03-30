@@ -85,14 +85,14 @@ static int at1101wd_watchdog_set_timeout(struct watchdog *wd, unsigned int
 	if (priv->timeout != timeout) {
 		/* unlock access to timeout register */
 		ret = i2c_read_reg(priv->client,
-				priv->exchange_offset+AT1101WD_REG_GET_SEC_KEY,
+				priv->exchange_offset + AT1101WD_REG_GET_SEC_KEY,
 				(uint8_t *)&secret, sizeof(secret));
 		if (ret < 0) {
 			dev_err(priv->dev, "failed to get secret key\n");
 			return ret;
 		}
 		ret = i2c_write_reg(priv->client,
-				priv->exchange_offset+AT1101WD_REG_SET_SEC_KEY,
+				priv->exchange_offset + AT1101WD_REG_SET_SEC_KEY,
 				(uint8_t *)&secret, sizeof(secret));
 		if (ret < 0) {
 			dev_err(priv->dev, "failed to set secret key\n");
@@ -102,7 +102,7 @@ static int at1101wd_watchdog_set_timeout(struct watchdog *wd, unsigned int
 		/* update the timeout */
 		val = timeout;
 		ret = i2c_write_reg(priv->client,
-				priv->exchange_offset+AT1101WD_REG_TIMEOUT,
+				priv->exchange_offset + AT1101WD_REG_TIMEOUT,
 				&val, sizeof(val));
 		if (ret < 0)
 			return ret;
@@ -111,7 +111,7 @@ static int at1101wd_watchdog_set_timeout(struct watchdog *wd, unsigned int
 
 	val = priv->progress;
 	ret = i2c_write_reg(priv->client,
-			priv->exchange_offset+AT1101WD_REG_TRIGGER,
+			priv->exchange_offset + AT1101WD_REG_TRIGGER,
 			&val, sizeof(val));
 	if (ret < 0)
 		return ret;
@@ -173,7 +173,7 @@ static void at1101wd_detect_reset_source(struct at1101wd *priv)
 	int ret;
 
 	ret = i2c_read_reg(priv->client,
-			priv->exchange_offset+AT1101WD_REG_BOOT_REASON,
+			priv->exchange_offset + AT1101WD_REG_BOOT_REASON,
 			&val, sizeof(val));
 	if (ret < 0)
 		return;
@@ -210,14 +210,14 @@ static void at1101wd_restart(struct restart_handler *rst)
 
 	/* unlock access to timeout register */
 	ret = i2c_read_reg(priv->client,
-			priv->exchange_offset+AT1101WD_REG_GET_SEC_KEY,
+			priv->exchange_offset + AT1101WD_REG_GET_SEC_KEY,
 			(uint8_t *)&secret, sizeof(secret));
 	if (ret < 0) {
 		dev_err(priv->dev, "failed to get secret key\n");
 		return;
 	}
 	ret = i2c_write_reg(priv->client,
-			priv->exchange_offset+AT1101WD_REG_SET_SEC_KEY,
+			priv->exchange_offset + AT1101WD_REG_SET_SEC_KEY,
 			(uint8_t *)&secret, sizeof(secret));
 	if (ret < 0) {
 		dev_err(priv->dev, "failed to set secret key\n");
@@ -225,7 +225,7 @@ static void at1101wd_restart(struct restart_handler *rst)
 	}
 
 	i2c_write_reg(priv->client,
-			priv->exchange_offset+AT1101WD_REG_REBOOT_REQ_WR,
+			priv->exchange_offset + AT1101WD_REG_REBOOT_REQ_WR,
 			&val, sizeof(val));
 
 	mdelay(1000);
@@ -319,12 +319,12 @@ static int at1101wd_read_static(struct at1101wd *priv) {
 	if (crc_off > (0xff - 4))
 		return -EINVAL;
 
-	ret = i2c_read_reg(priv->client, 0x01, &buf[0x01], buf[0x00]+4);
+	ret = i2c_read_reg(priv->client, 0x01, &buf[0x01], buf[0x00] + 4);
 	if (ret < 0)
 		return ret;
 
 	crc = ~0;
-	crc = at1101wd_crc32(crc, buf, crc_off+4);
+	crc = at1101wd_crc32(crc, buf, crc_off + 4);
 	if (crc) {
 		dev_err(priv->dev, "CRC ERROR (result 0x%08x)\n", crc);
 		return -EINVAL;
@@ -334,11 +334,11 @@ static int at1101wd_read_static(struct at1101wd *priv) {
 	for (;;) {
 		if (block_off == crc_off)
 			break;
-		if ((block_off+1) >= crc_off) {
+		if ((block_off + 1) >= crc_off) {
 			dev_err(priv->dev, "INCOMPLETE BLOCK HEADER (offset 0x%02x)\n", block_off);
 			return -EINVAL;
 		}
-		block_len = buf[block_off+1];
+		block_len = buf[block_off + 1];
 		if ((block_off+2+block_len) > crc_off) {
 			dev_err(priv->dev, "INCOMPLETE BLOCK (offset 0x%02x, len 0x%02x)\n", block_off, block_len);
 			return -EINVAL;
@@ -389,14 +389,14 @@ static int at1101wd_set_clear(struct param_d *param, void *data)
 
 	/* unlock access to timeout register */
 	ret = i2c_read_reg(priv->client,
-			priv->exchange_offset+AT1101WD_REG_GET_SEC_KEY,
+			priv->exchange_offset + AT1101WD_REG_GET_SEC_KEY,
 			(uint8_t *)&secret, sizeof(secret));
 	if (ret < 0) {
 		dev_err(priv->dev, "failed to get secret key\n");
 		return ret;
 	}
 	ret = i2c_write_reg(priv->client,
-			priv->exchange_offset+AT1101WD_REG_SET_SEC_KEY,
+			priv->exchange_offset + AT1101WD_REG_SET_SEC_KEY,
 			(uint8_t *)&secret, sizeof(secret));
 	if (ret < 0) {
 		dev_err(priv->dev, "failed to set secret key\n");
@@ -404,7 +404,7 @@ static int at1101wd_set_clear(struct param_d *param, void *data)
 	}
 
 	ret = i2c_write_reg(priv->client,
-			priv->exchange_offset+AT1101WD_REG_CLEAR,
+			priv->exchange_offset + AT1101WD_REG_CLEAR,
 			&val, sizeof(val));
 	if (ret < 0) {
 		dev_err(priv->dev, "failed to clear watchdog state\n");
