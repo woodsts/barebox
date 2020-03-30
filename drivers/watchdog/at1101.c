@@ -411,7 +411,7 @@ static int at1101wd_set_clear(struct param_d *param, void *data)
 		return ret;
 	}
 
-	return ret;
+	return 0;
 }
 
 static int at1101wd_probe(struct device_d *dev)
