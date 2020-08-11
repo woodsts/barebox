@@ -3,6 +3,7 @@
 #include <debug_ll.h>
 #include <image-metadata.h>
 #include <platform_data/mmc-esdhc-imx.h>
+#include <i2c/i2c-early.h>
 #include <soc/fsl/fsl_ddr_sdram.h>
 #include <soc/fsl/immap_lsch2.h>
 #include <asm/barebox-arm-head.h>
@@ -214,9 +215,48 @@ static struct fsl_ddr_controller arkona_c300_ddrc[] = {
 	},
 };
 
+/*
+ * returns TQ board variant:
+ * 1: Layerscape Custom version A
+ * 0: Layerscape standard board
+ */
+static int c300_board_variant(void *ctx, int *board) {
+	unsigned char buf[3] = { 0 };
+	uint8_t pos = 0x4b;
+	int ret = 0;
+	struct i2c_msg msg[2] = {
+		{
+			.addr = 0x50,
+			.len = 1,
+			.buf = &pos,
+		}, {
+			.addr = 0x50,
+			.len = 2,
+			.flags = I2C_M_RD,
+			.buf = (void *)&buf,
+		}
+	};
+	ret = i2c_fsl_xfer(ctx, msg, 2);
+	if (ret < 0)
+		return ret;
+
+	putc_ll('\n');
+	putc_ll(buf[0]);
+	putc_ll(buf[1]);
+	putc_ll('\n');
+
+	if (buf[0] == 'C' && buf[1] == 'A')
+		*board = 1;
+	else
+		*board = 0;
+	return 0;
+}
+
 static noinline __noreturn void arkona_c300_r_entry(void)
 {
 	unsigned long membase = LS1046A_DDR_SDRAM_BASE;
+	struct fsl_i2c *i2c;
+	int board_variant = 0;
 
 	if (get_pc() >= membase)
 		barebox_arm_entry(membase, 0x80000000 - SZ_64M,
@@ -231,6 +271,10 @@ static noinline __noreturn void arkona_c300_r_entry(void)
 	putc_ll('>');
 
 	IMD_USED_OF(fsl_tqmls1046a_arkona_c300);
+
+	i2c = ls1046_i2c_init(IOMEM(LSCH2_I2C1_BASE_ADDR));
+
+	c300_board_variant(i2c, &board_variant);
 
 	fsl_ddr_set_memctl_regs(&arkona_c300_ddrc[0], 0);
 
