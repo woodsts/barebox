@@ -15,7 +15,7 @@
 #include <mach/xload.h>
 #include <mach/layerscape.h>
 
-static struct fsl_ddr_controller ddrc[] = {
+static struct fsl_ddr_controller tqmls1046a_ddrc[] = {
 	{
 		.memctl_opts.ddrtype = SDRAM_TYPE_DDR4,
 		.base = IOMEM(LSCH2_DDR_ADDR),
@@ -137,8 +137,6 @@ extern char __dtb_fsl_tqmls1046a_arkona_c300_start[];
 
 static struct fsl_ddr_controller arkona_c300_ddrc[] = {
 	{
-		.dimm_slots_per_ctrl = ARRAY_SIZE(dimm_params),
-		.dimm_params = dimm_params,
 		.memctl_opts.ddrtype = SDRAM_TYPE_DDR4,
 		.base = IOMEM(LSCH2_DDR_ADDR),
 		.ddr_freq = LS1046A_DDR_FREQ,
@@ -148,7 +146,6 @@ static struct fsl_ddr_controller arkona_c300_ddrc[] = {
 		.erratum_A009801 = 1,
 		.erratum_A009942 = 1,
 		.chip_selects_per_ctrl = 4,
-		.board_options = ddr_board_options,
 		.fsl_ddr_config_reg = {
 	.cs[0].bnds         = 0x000001FF,
 	.cs[0].config       = 0x80010422,
