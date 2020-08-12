@@ -212,6 +212,84 @@ static struct fsl_ddr_controller arkona_c300_ddrc[] = {
 	},
 };
 
+static struct fsl_ddr_controller arkona_c300_ddrc_ca[] = {
+	{
+		.memctl_opts.ddrtype = SDRAM_TYPE_DDR4,
+		.base = IOMEM(LSCH2_DDR_ADDR),
+		.ddr_freq = LS1046A_DDR_FREQ,
+		.erratum_A008511 = 1,
+		.erratum_A009803 = 1,
+		.erratum_A010165 = 1,
+		.erratum_A009801 = 1,
+		.erratum_A009942 = 1,
+		.chip_selects_per_ctrl = 4,
+		.fsl_ddr_config_reg = {
+	.cs[0].bnds         = 0x000001FF,
+	.cs[0].config       = 0x80010422,
+	.cs[0].config       = 0x80010512,
+	.cs[0].config_2     = 0x00000000,
+	.cs[1].bnds         = 0x00000000,
+	.cs[1].config       = 0x00000000,
+	.cs[1].config_2     = 0x00000000,
+	.cs[2].bnds         = 0x00000000,
+	.cs[2].config       = 0x00000000,
+	.cs[2].config_2     = 0x00000000,
+	.cs[3].bnds         = 0x00000000,
+	.cs[3].config       = 0x00000000,
+	.cs[3].config_2     = 0x00000000,
+	.timing_cfg_3       = 0x12551100,
+	.timing_cfg_0       = 0xA0660008,
+	.timing_cfg_1       = 0x060E6278,
+	.timing_cfg_2       = 0x0058625E,
+	.ddr_sdram_cfg      = 0x65200008,
+	.ddr_sdram_cfg_2    = 0x00401070,
+	.ddr_sdram_cfg_3    = 0x40000000,
+	.ddr_sdram_mode     = 0x05030635,
+	.ddr_sdram_mode_2   = 0x00100000,
+	.ddr_sdram_mode_3   = 0x00000000,
+	.ddr_sdram_mode_4   = 0x00000000,
+	.ddr_sdram_mode_5   = 0x00000000,
+	.ddr_sdram_mode_6   = 0x00000000,
+	.ddr_sdram_mode_7   = 0x00000000,
+	.ddr_sdram_mode_8   = 0x00000000,
+	.ddr_sdram_mode_9   = 0x00000701,
+	.ddr_sdram_mode_10  = 0x08800000,
+	.ddr_sdram_mode_11  = 0x00000000,
+	.ddr_sdram_mode_12  = 0x00000000,
+	.ddr_sdram_mode_13  = 0x00000000,
+	.ddr_sdram_mode_14  = 0x00000000,
+	.ddr_sdram_mode_15  = 0x00000000,
+	.ddr_sdram_mode_16  = 0x00000000,
+	.ddr_sdram_interval = 0x0F3C079E,
+	.ddr_data_init      = 0xDEADBEEF,
+	.ddr_sdram_clk_cntl = 0x02400000,
+	.ddr_init_addr      = 0x00000000,
+	.ddr_init_ext_addr  = 0x00000000,
+	.timing_cfg_4       = 0x00224502,
+	.timing_cfg_5       = 0x06401400,
+	.timing_cfg_6       = 0x00000000,
+	.timing_cfg_7       = 0x25540000,
+	.timing_cfg_8       = 0x06445A00,
+	.timing_cfg_9       = 0x00000000,
+	.ddr_zq_cntl        = 0x8A090705,
+	.ddr_wrlvl_cntl     = 0x86750608,
+	.ddr_wrlvl_cntl_2   = 0x07070605,
+	.ddr_wrlvl_cntl_3   = 0x05040407,
+	.ddr_sr_cntr        = 0x00000000,
+	.ddr_sdram_rcw_1    = 0x00000000,
+	.ddr_sdram_rcw_2    = 0x00000000,
+	.ddr_sdram_rcw_3    = 0x00000000,
+	.ddr_cdr1           = 0x80080000,
+	.ddr_cdr2           = 0x00000080,
+	.dq_map_0           = 0x06106104,
+	.dq_map_1           = 0x84184184,
+	.dq_map_2           = 0x06106104,
+	.dq_map_3           = 0x84184000,
+	.debug[28]          = 0x00700046,
+		},
+	},
+};
+
 /*
  * returns TQ board variant:
  * 1: Layerscape Custom version A
@@ -272,8 +350,10 @@ static noinline __noreturn void arkona_c300_r_entry(void)
 	i2c = ls1046_i2c_init(IOMEM(LSCH2_I2C1_BASE_ADDR));
 
 	c300_board_variant(i2c, &board_variant);
-
-	fsl_ddr_set_memctl_regs(&arkona_c300_ddrc[0], 0);
+	if (board_variant == 1)
+		fsl_ddr_set_memctl_regs(&arkona_c300_ddrc_ca[0], 0);
+	else
+		fsl_ddr_set_memctl_regs(&arkona_c300_ddrc[0], 0);
 
 	ls1046a_errata_post_ddr();
 
