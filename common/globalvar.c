@@ -652,6 +652,9 @@ static int globalvar_init(void)
 
 	globalvar_add_simple("version", UTS_RELEASE);
 
+	if (strlen(buildsystem_version_string) > 0)
+		globalvar_add_simple("buildsystem.version", buildsystem_version_string);
+
 	return 0;
 }
 pure_initcall(globalvar_init);
