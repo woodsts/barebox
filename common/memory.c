@@ -251,25 +251,18 @@ postmem_initcall(add_mem_devices);
 /*
  * Request a region from the registered sdram
  */
-struct resource *__request_sdram_region(const char *name, unsigned flags,
-				      resource_size_t start, resource_size_t size,
-				      enum resource_memtype memtype, unsigned memattrs)
+struct resource *__request_sdram_region(const char *name,
+					resource_size_t start, resource_size_t size)
 {
 	struct memory_bank *bank;
-
-	flags |= IORESOURCE_MEM;
 
 	for_each_memory_bank(bank) {
 		struct resource *res;
 
 		res = __request_region(bank->res, start, start + size - 1,
-				       name, flags);
-		if (!IS_ERR(res)) {
-			res->type = memtype;
-			res->attrs = memattrs;
-			res->flags |= IORESOURCE_TYPE_VALID;
+				       name, IORESOURCE_MEM);
+		if (!IS_ERR(res))
 			return res;
-		}
 	}
 
 	return NULL;
@@ -291,13 +284,10 @@ struct resource *reserve_sdram_region(const char *name, resource_size_t start,
 		size = ALIGN(size, PAGE_SIZE);
 	}
 
-	res = __request_sdram_region(name, IORESOURCE_BUSY, start, size);
+	res = request_sdram_region(name, start, size,
+				   MEMTYPE_RESERVED, MEMATTRS_RW_DEVICE);
 	if (!res)
 		return NULL;
-
-	res->type = MEMTYPE_RESERVED;
-	res->attrs = MEMATTRS_RW_DEVICE;
-	res->flags |= IORESOURCE_TYPE_VALID;
 
 	remap_range((void *)start, size, MAP_UNCACHED);
 
