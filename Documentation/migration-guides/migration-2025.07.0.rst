@@ -1,3 +1,6 @@
+Release v2025.07.0
+==================
+
 Configuration options
 ---------------------
 
